@@ -71,12 +71,11 @@
         .time-display { font-size: 1.6rem; color: #145A32; font-weight: bold; }
         .timer-display { font-size: 1.3rem; color: #c0392b; font-weight: bold; }
 
-        /* الجدول */
         table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed; /* أساسي لمنع تداخل الأعمدة */
-        }
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
 
         thead { background-color: #145A32; color: white; }
         
@@ -170,6 +169,15 @@
             color: black !important;
             border-top: 2px solid black !important;
         }
+        @media print {
+    body {
+        zoom: 0.85;
+    }
+    table {
+        page-break-inside: avoid;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -193,7 +201,13 @@
 
     <table>
         <colgroup>
-            <col style="width: 8%;">  <col style="width: 12%;"> <col style="width: 20%;"> <col style="width: 20%;"> <col style="width: 20%;"> <col style="width: 20%;"> </colgroup>
+  <col style="width: 6%;">
+  <col style="width: 14%;">
+  <col style="width: 20%;">
+  <col style="width: 20%;">
+  <col style="width: 20%;">
+  <col style="width: 20%;">
+</colgroup>
         <thead>
             <tr>
                 <th>رمضان</th>
@@ -372,29 +386,31 @@
     // 4. تحميل PDF (مضبوط للصفحة الواحدة)
     // ==========================================
     function downloadPDF() {
-        const el = document.getElementById('capture-area');
-        const btn = document.getElementById('dlBtn');
-        btn.innerText = "جاري التجهيز...";
-        btn.disabled = true;
+    const el = document.getElementById('capture-area');
+    const btn = document.getElementById('dlBtn');
+    btn.innerText = "جاري التجهيز...";
+    btn.disabled = true;
 
-        el.classList.add('pdf-mode');
+    el.classList.add('pdf-mode');
 
-        const opt = {
-            margin:       [0.1, 0, 0.1, 0], // هوامش ضيقة جداً
-            filename:     'Ramadan_2026_Elazig.pdf',
-            image:        { type: 'jpeg', quality: 1 },
-            html2canvas:  { scale: 2, scrollY: 0 }, 
-            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-        };
+    const opt = {
+        margin: 0,
+        filename: 'Ramadan_2026_Elazig.pdf',
+        image: { type: 'jpeg', quality: 1 },
+        html2canvas: { scale: 1.5, scrollY: 0 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all'] }
+    };
 
-        setTimeout(() => {
-            html2pdf().set(opt).from(el).save().then(() => {
-                el.classList.remove('pdf-mode');
-                btn.innerText = "تحميل الإمساكية PDF 📥";
-                btn.disabled = false;
-            });
-        }, 500);
-    }
+    setTimeout(() => {
+        html2pdf().set(opt).from(el).save().then(() => {
+            el.classList.remove('pdf-mode');
+            btn.innerText = "تحميل الإمساكية PDF 📥";
+            btn.disabled = false;
+        });
+    }, 300);
+}
+
 </script>
 </body>
 </html>
