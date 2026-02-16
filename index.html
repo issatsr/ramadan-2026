@@ -109,4 +109,258 @@
            تنسيق PDF (تم حل مشكلة التداخل)
            ================================================== */
         .pdf-mode {
-            width: 100%
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 20px !important;
+            border: none !important;
+            box-shadow: none !important;
+            background: white !important;
+        }
+
+        .pdf-mode .dashboard, 
+        .pdf-mode .btn-area { display: none !important; }
+
+        .pdf-mode .header {
+            background: white !important;
+            color: black !important;
+            padding: 0 0 10px 0 !important;
+            border-bottom: 2px solid var(--primary) !important;
+            text-align: center !important;
+            margin-bottom: 5px !important;
+        }
+        .pdf-mode .header h1 { font-size: 1.6rem !important; color: var(--primary) !important; margin-bottom: 2px !important; }
+        .pdf-mode .header h3 { font-size: 0.9rem !important; color: #555 !important; }
+
+        .pdf-mode table {
+            font-size: 10px !important;
+            width: 100% !important;
+            border: 1px solid #999 !important;
+        }
+
+        .pdf-mode thead {
+            background-color: #eee !important;
+            color: black !important;
+            border-bottom: 2px solid #999 !important;
+        }
+        
+        .pdf-mode th {
+            padding: 5px !important;
+            font-weight: bold !important;
+            border: 1px solid #ccc !important;
+            font-size: 10px !important;
+        }
+
+        .pdf-mode td {
+            padding: 4.5px 4px !important; /* هوامش جانبية لمنع الالتصاق */
+            border: 1px solid #ddd !important;
+            vertical-align: middle !important;
+        }
+
+        .pdf-mode tr:nth-child(even) { background-color: #f7f7f7 !important; }
+        
+        .pdf-mode tr.active-day, 
+        .pdf-mode tr.next-day, 
+        .pdf-mode tr.finished {
+            background-color: transparent !important;
+            color: black !important;
+            text-decoration: none !important;
+            border: none !important;
+            font-weight: normal !important;
+        }
+
+        .pdf-mode .eid-row {
+            background-color: #f0f0f0 !important;
+            color: black !important;
+            font-weight: bold !important;
+            border-top: 2px solid #999 !important;
+            font-size: 11px !important;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container" id="capture-area">
+    <div class="header">
+        <h1>إمساكية رمضان 2026</h1>
+        <h3>ولاية إيلازيغ - تركيا (Elazığ)</h3>
+    </div>
+
+    <div class="dashboard" data-html2canvas-ignore="true">
+        <div class="dash-item">
+            <div style="font-size:0.9rem; color:#777">الوقت الحالي</div>
+            <div id="clock" class="time-big en-num">00:00:00</div>
+        </div>
+        <div class="dash-item">
+            <div id="event-label" style="font-size:0.9rem; color:#777">المتبقي</div>
+            <div id="countdown" class="timer-big en-num">--:--:--</div>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th width="7%">رمضان</th>  <th width="13%">اليوم</th>   <th width="32%">التاريخ</th> <th width="16%">الإمساك</th>
+                <th width="16%">الفجر</th>
+                <th width="16%">الغروب</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            </tbody>
+    </table>
+    
+    <div style="height: 5px;"></div>
+</div>
+
+<div class="btn-area">
+    <button id="dlBtn" class="btn-download" onclick="downloadPDF()">تحميل الإمساكية PDF 📥</button>
+</div>
+
+<script>
+    // ==========================================
+    // البيانات
+    // ==========================================
+    const startDate = new Date(2026, 1, 19); 
+    const ramadanLen = 29;
+    
+    const monthsAr = { 1: "شباط", 2: "آذار" };
+    const daysAr = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+    
+    let imsakMins = 37; let maghribMins = 5;
+    const tableData = [];
+
+    for (let i = 0; i < ramadanLen; i++) {
+        let curr = new Date(startDate);
+        curr.setDate(startDate.getDate() + i);
+
+        imsakMins -= 1.2; maghribMins += 1.1;
+        
+        let iH = 5; let iM = Math.floor(imsakMins);
+        let mH = 18; let mM = Math.floor(maghribMins);
+        if(mM >= 60) { mH++; mM -= 60; }
+
+        let imsak = `0${iH}:${iM.toString().padStart(2, '0')}`;
+        let fajr = `0${iH}:${(iM+10).toString().padStart(2, '0')}`;
+        let maghrib = `${mH}:${mM.toString().padStart(2, '0')}`;
+
+        tableData.push({
+            r: i + 1,
+            d: daysAr[curr.getDay()],
+            dt: `${curr.getDate()} ${monthsAr[curr.getMonth()]}`,
+            full: curr.toISOString().split('T')[0],
+            i: imsak, f: fajr, m: maghrib
+        });
+    }
+
+    let eidDate = new Date(startDate);
+    eidDate.setDate(startDate.getDate() + ramadanLen);
+    let eidStr = `${daysAr[eidDate.getDay()]} ${eidDate.getDate()} ${monthsAr[eidDate.getMonth()]}`;
+
+    // ==========================================
+    // تعبئة الجدول
+    // ==========================================
+    const tBody = document.getElementById('tableBody');
+    const now = new Date();
+    const todayStr = now.toISOString().split('T')[0];
+    const tomDate = new Date(now); tomDate.setDate(now.getDate() + 1);
+    const tomStr = tomDate.toISOString().split('T')[0];
+
+    tableData.forEach(row => {
+        let tr = document.createElement('tr');
+        if(row.full === todayStr) tr.className = 'active-day';
+        else if(row.full === tomStr) tr.className = 'next-day';
+        else if(row.full < todayStr) tr.className = 'finished';
+
+        tr.innerHTML = `
+            <td class="en-num">${row.r}</td>
+            <td style="font-size: 0.95em;">${row.d}</td>
+            <td style="white-space: nowrap; font-size: 0.9em;">${row.dt}</td> <td class="en-num">${row.i}</td>
+            <td class="en-num">${row.f}</td>
+            <td class="en-num">${row.m}</td>
+        `;
+        tBody.appendChild(tr);
+    });
+
+    let eidTr = document.createElement('tr');
+    eidTr.className = 'eid-row';
+    eidTr.innerHTML = `
+        <td colspan="3">عيد الفطر المبارك</td>
+        <td colspan="3" class="en-num" style="direction:ltr">Prayer: 06:10 AM (${eidStr})</td>
+    `;
+    tBody.appendChild(eidTr);
+
+    // ==========================================
+    // الساعة
+    // ==========================================
+    function updateClock() {
+        const n = new Date();
+        document.getElementById('clock').innerText = n.toLocaleTimeString('en-US', {hour12:false});
+        
+        let target = null; let lbl = "";
+        let firstD = new Date(`${tableData[0].full}T${tableData[0].i}:00`);
+        
+        if (n < firstD) {
+            target = firstD; lbl = "المتبقي لبدء رمضان";
+        } else {
+            let tInfo = tableData.find(d => d.full === n.toISOString().split('T')[0]);
+            if(tInfo) {
+                let tI = new Date(`${tInfo.full}T${tInfo.i}:00`);
+                let tF = new Date(`${tInfo.full}T${tInfo.f}:00`);
+                let tM = new Date(`${tInfo.full}T${tInfo.m}:00`);
+                
+                if(n < tI) { target = tI; lbl = "المتبقي للإمساك"; }
+                else if(n < tF) { target = tF; lbl = "المتبقي للفجر"; }
+                else if(n < tM) { target = tM; lbl = "المتبقي للإفطار"; }
+            }
+            if(!target) {
+                let fut = tableData.find(d => d.full > n.toISOString().split('T')[0]);
+                if(fut) { target = new Date(`${fut.full}T${fut.i}:00`); lbl = "إمساك الغد"; }
+                else { lbl = "عيد مبارك"; }
+            }
+        }
+        
+        const cDiv = document.getElementById('countdown');
+        document.getElementById('event-label').innerText = lbl;
+        
+        if(target) {
+            const diff = target - n;
+            const d = Math.floor(diff/(1000*60*60*24));
+            const h = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+            const m = Math.floor((diff%(1000*60*60))/(1000*60));
+            const s = Math.floor((diff%(1000*60))/1000);
+            cDiv.innerText = d > 0 ? `${d}d ${h}:${m}:${s}` : `${h}:${m}:${s}`;
+        } else { cDiv.innerText = "00:00:00"; }
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // ==========================================
+    // PDF
+    // ==========================================
+    function downloadPDF() {
+        const el = document.getElementById('capture-area');
+        const btn = document.getElementById('dlBtn');
+        btn.innerText = "جاري التجهيز...";
+        btn.disabled = true;
+
+        el.classList.add('pdf-mode');
+
+        const opt = {
+            margin:       [0.3, 0.4, 0.3, 0.4], 
+            filename:     'Ramadan_2026_Elazig.pdf',
+            image:        { type: 'jpeg', quality: 1 },
+            html2canvas:  { scale: 2, scrollY: 0 }, 
+            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+
+        setTimeout(() => {
+            html2pdf().set(opt).from(el).save().then(() => {
+                el.classList.remove('pdf-mode');
+                btn.innerText = "تحميل الإمساكية PDF 📥";
+                btn.disabled = false;
+            });
+        }, 500);
+    }
+</script>
+</body>
+</html>
