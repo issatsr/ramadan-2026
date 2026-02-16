@@ -24,9 +24,8 @@
             text-align: center;
         }
 
-        /* تنسيق الأرقام */
         .en-num {
-            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
             font-weight: 700;
             direction: ltr;
             display: inline-block;
@@ -71,11 +70,11 @@
         .big-time { font-size: 1.5rem; color: #145A32; font-weight: bold; }
         .red-time { font-size: 1.2rem; color: #c0392b; font-weight: bold; }
 
-        /* --- جدول صلب (Strict Table) --- */
+        /* الجدول */
         table {
             width: 100%;
             border-collapse: collapse;
-            table-layout: fixed; /* يمنع تحرك الأعمدة نهائياً */
+            table-layout: fixed; 
         }
 
         thead { background-color: #145A32; color: white; }
@@ -86,15 +85,13 @@
             text-align: center;
             vertical-align: middle;
             font-size: 0.95rem;
-            white-space: nowrap; /* يمنع نزول النص لسطر ثاني */
+            white-space: nowrap; 
         }
 
-        /* ألوان الصفوف */
         tr:nth-child(even) { background-color: #fcfcfc; }
         tr.active-day { background-color: #d5f5e3 !important; font-weight: bold; }
         tr.finished { background-color: #eeeeee; color: #999; text-decoration: line-through; }
         
-        /* صف العيد */
         .eid-row {
             background: #f39c12 !important;
             color: white;
@@ -117,11 +114,11 @@
         }
 
         /* ==================================================
-           وضع الطباعة (PDF) - تعديلات جذرية لتناسب الصفحة
+           وضع الطباعة (PDF) - الحل النهائي للمساحة
            ================================================== */
         .pdf-mode {
             width: 100% !important;
-            padding: 10px !important;
+            padding: 0 !important; /* إزالة الحواف الداخلية للحاوية */
             border: none !important;
             box-shadow: none !important;
         }
@@ -129,17 +126,19 @@
         .pdf-mode .dashboard, 
         .pdf-mode .btn-area { display: none !important; }
 
+        /* تصغير الهيدر جداً في الطباعة */
         .pdf-mode .header {
-            padding: 5px !important;
+            padding: 5px 0 !important;
             background: white !important;
             color: black !important;
             border-bottom: 2px solid black !important;
+            margin-bottom: 5px !important;
         }
-        .pdf-mode .header h1 { font-size: 1.5rem !important; color: black !important; }
-        .pdf-mode .header h3 { font-size: 0.9rem !important; color: #333 !important; }
+        .pdf-mode .header h1 { font-size: 1.4rem !important; color: black !important; margin: 0 !important;}
+        .pdf-mode .header h3 { font-size: 0.8rem !important; color: #333 !important; margin: 0 !important;}
 
         .pdf-mode table {
-            font-size: 10px !important; /* خط صغير للجدول */
+            font-size: 9px !important; /* تصغير الخط */
             border: 2px solid black !important;
         }
 
@@ -149,12 +148,19 @@
             border-bottom: 2px solid black !important;
         }
 
-        .pdf-mode th, .pdf-mode td {
-            padding: 4px 1px !important; /* تقليل الهوامش لأقصى حد */
+        .pdf-mode th {
+            padding: 4px 1px !important;
             border: 1px solid #555 !important;
-            height: auto !important;
         }
 
+        .pdf-mode td {
+            padding: 2.5px 1px !important; /* ضغط عمودي قوي جداً */
+            border: 1px solid #555 !important;
+            height: auto !important;
+            line-height: 1.1 !important;
+        }
+
+        /* إزالة الألوان والخلفيات لتوفير الحبر والمساحة */
         .pdf-mode tr.active-day, 
         .pdf-mode tr.finished {
             background-color: transparent !important;
@@ -162,10 +168,14 @@
             text-decoration: none !important;
         }
 
+        /* صف العيد في الطباعة */
         .pdf-mode .eid-row {
             background-color: #eee !important;
             color: black !important;
             border-top: 2px solid black !important;
+        }
+        .pdf-mode .eid-row td {
+             padding: 5px !important; /* تقليل ارتفاع صف العيد أيضاً */
         }
     </style>
 </head>
@@ -205,7 +215,7 @@
             </tbody>
     </table>
     
-    <div style="height: 5px;"></div>
+    <div style="height: 5px;" class="pdf-hidden"></div>
 </div>
 
 <div class="btn-area">
@@ -214,15 +224,14 @@
 
 <script>
     // ==========================================
-    // البيانات (منسوخة من رسالتك)
+    // البيانات
     // ==========================================
-    const startDate = new Date(2026, 1, 19); // 19 شباط
+    const startDate = new Date(2026, 1, 19); 
     const ramadanLen = 29;
     
     const monthsAr = { 1: "شباط", 2: "آذار" };
     const daysAr = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
     
-    // البيانات التي أرسلتها (بالترتيب)
     const imsakRaw = [
         "05.31", "05.30", "05.28", "05.27", "05.26", "05.25", "05.23", "05.22", "05.21", "05.19",
         "05.18", "05.16", "05.15", "05.13", "05.12", "05.11", "05.09", "05.08", "05.06", "05.04",
@@ -241,13 +250,11 @@
         "06.32", "06.33", "06.34", "06.35", "06.36", "06.37", "06.38", "06.39", "06.40"
     ];
 
-    // تجميع البيانات
     const tableData = [];
     for (let i = 0; i < ramadanLen; i++) {
         let curr = new Date(startDate);
         curr.setDate(startDate.getDate() + i);
 
-        // تنظيف البيانات (استبدال النقطة بنقطتين للجمالية والعداد)
         let imsak = (imsakRaw[i] || "").replace('.', ':');
         let fajr = (fajrRaw[i] || "").replace('.', ':');
         let maghrib = (maghribRaw[i] || "").replace('.', ':');
@@ -292,7 +299,7 @@
         tBody.appendChild(tr);
     });
 
-    // --- صف العيد (تصميم 50/50 ثابت) ---
+    // صف العيد
     let eidTr = document.createElement('tr');
     eidTr.className = 'eid-row';
     eidTr.innerHTML = `
@@ -306,7 +313,7 @@
     tBody.appendChild(eidTr);
 
     // ==========================================
-    // الساعة والعداد
+    // الساعة
     // ==========================================
     function updateClock() {
         const n = new Date();
@@ -350,7 +357,7 @@
     updateClock();
 
     // ==========================================
-    // PDF (إعدادات دقيقة لتناسب A4)
+    // PDF (ضبط نهائي)
     // ==========================================
     function downloadPDF() {
         const el = document.getElementById('capture-area');
@@ -361,8 +368,8 @@
         el.classList.add('pdf-mode');
 
         const opt = {
-            margin:       0.1, // هامش صغير جداً
-            filename:     'Imsakiye_Elazig_2026.pdf',
+            margin:       [0.1, 0, 0.1, 0], // هوامش: أعلى 0.1، يمين 0، أسفل 0.1، يسار 0
+            filename:     'Ramadan_2026_Elazig.pdf',
             image:        { type: 'jpeg', quality: 1 },
             html2canvas:  { scale: 2, scrollY: 0 }, 
             jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
