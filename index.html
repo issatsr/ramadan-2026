@@ -13,6 +13,7 @@
             --gold: #D4AC0D;
             --bg: #fdfbf7;
             --text: #333;
+            --border-color: #999; /* لون الخطوط الفاصلة */
         }
 
         body {
@@ -32,70 +33,88 @@
         }
 
         .container {
-            /* تم توسيع الجدول هنا ليكون عريضاً ومريحاً */
-            max-width: 950px; 
+            max-width: 950px;
             margin: 0 auto;
             background: white;
             border-radius: 15px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            border: 1px solid #ddd;
+            border: 2px solid #aaa; /* إطار خارجي */
             overflow: hidden;
             position: relative;
         }
 
-        /* --- الهيدر (الشاشة) --- */
+        /* --- الهيدر --- */
         .header {
             background: linear-gradient(135deg, var(--primary), #0e3d23);
             color: white;
-            padding: 20px;
+            padding: 15px;
             border-bottom: 4px solid var(--gold);
         }
-        .header h1 { font-family: 'Amiri', serif; margin: 0; font-size: 2.2rem; }
+        .header h1 { font-family: 'Amiri', serif; margin: 0; font-size: 2rem; }
         .header h3 { margin: 5px 0 0; font-weight: normal; font-size: 1.1rem; }
 
-        /* --- الساعة (الشاشة) --- */
+        /* --- لوحة المعلومات (الساعة والتاريخ) --- */
         .dashboard {
             display: flex;
             justify-content: center;
             gap: 20px;
-            padding: 20px;
-            background: #fff;
-            border-bottom: 1px dashed #ccc;
+            padding: 15px;
+            background: #f0f0f0;
+            border-bottom: 2px solid #ccc;
         }
         .dash-item {
-            background: #f4f4f4;
-            padding: 10px 20px;
-            border-radius: 8px;
-            min-width: 160px;
+            background: white;
+            padding: 10px 25px;
+            border-radius: 10px;
+            border: 1px solid #bbb;
+            min-width: 200px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
-        .time-big { font-size: 1.8rem; color: var(--primary); font-weight: bold; }
-        .timer-big { font-size: 1.3rem; color: #c0392b; font-weight: bold; }
+        .date-display {
+            font-size: 0.95rem;
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        .time-big { font-size: 1.8rem; color: #333; font-weight: bold; }
+        .timer-big { font-size: 1.4rem; color: #c0392b; font-weight: bold; }
 
-        /* --- الجدول (الشاشة) --- */
+        /* --- الجدول (مع خطوط فاصلة) --- */
         table {
             width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed; /* تثبيت الأعمدة */
+            border-collapse: collapse; /* دمج الحدود لتصبح خطاً واحداً */
+            table-layout: fixed;
         }
+        
         thead { background-color: var(--primary); color: white; }
         
-        th { 
-            padding: 12px 10px; /* زيادة الحشوة */
-            font-weight: normal; 
-            text-align: center; 
-            white-space: nowrap;
+        /* تنسيق الخلايا مع الحدود */
+        th, td { 
+            padding: 8px 5px; 
+            text-align: center;
+            border: 1px solid var(--border-color); /* خط فاصل لكل خلية */
+            vertical-align: middle;
+        }
+
+        th { font-weight: bold; font-size: 1rem; }
+        td { font-size: 0.95rem; }
+        
+        /* تلوين الصفوف */
+        tr:nth-child(even) { background-color: #f8f8f8; }
+        
+        tr.active-day { 
+            background-color: #d5f5e3 !important; 
+            font-weight: bold;
+            border: 2px solid var(--primary); /* تمييز اليوم الحالي بإطار أغمق */
         }
         
-        td { 
-            padding: 10px 5px; 
-            border-bottom: 1px solid #eee; 
-            text-align: center; 
-            white-space: nowrap; /* يمنع تراكم الأوقات فوق بعضها */
+        tr.finished { 
+            background-color: #e0e0e0; 
+            color: #888; 
+            text-decoration: line-through; 
         }
-        
-        tr.active-day { background-color: #d5f5e3; border-left: 5px solid var(--primary); font-weight: bold; }
-        tr.next-day { background-color: #fcf3cf; }
-        tr.finished { background-color: #f9f9f9; color: #aaa; text-decoration: line-through; text-decoration-color: #c0392b; }
         
         .eid-row {
             background: linear-gradient(90deg, #f1c40f, #f39c12);
@@ -120,16 +139,15 @@
         .btn-download:hover { transform: scale(1.05); }
 
         /* ==================================================
-           تنسيق PDF (مستقل ومضبوط لورقة A4)
+           تنسيق PDF
            ================================================== */
         .pdf-mode {
             width: 100% !important;
             margin: 0 !important;
-            padding: 20px !important;
+            padding: 15px !important;
             border: none !important;
             box-shadow: none !important;
             background: white !important;
-            max-width: none !important; /* إلغاء الحد الأقصى للعرض في الطباعة */
         }
 
         .pdf-mode .dashboard, 
@@ -138,57 +156,44 @@
         .pdf-mode .header {
             background: white !important;
             color: black !important;
-            padding: 0 0 10px 0 !important;
+            padding: 5px 0 !important;
             border-bottom: 2px solid var(--primary) !important;
-            text-align: center !important;
             margin-bottom: 5px !important;
         }
-        .pdf-mode .header h1 { font-size: 1.6rem !important; color: var(--primary) !important; margin-bottom: 2px !important; }
-        .pdf-mode .header h3 { font-size: 0.9rem !important; color: #555 !important; }
+        .pdf-mode .header h1 { font-size: 1.5rem !important; color: black !important; margin: 0 !important; }
+        .pdf-mode .header h3 { font-size: 0.9rem !important; color: #333 !important; margin: 0 !important; }
 
         .pdf-mode table {
-            font-size: 10px !important;
-            width: 100% !important;
-            border: 1px solid #999 !important;
+            font-size: 9px !important;
+            border: 2px solid black !important;
         }
 
         .pdf-mode thead {
-            background-color: #eee !important;
+            background-color: #ddd !important;
             color: black !important;
-            border-bottom: 2px solid #999 !important;
+            border-bottom: 2px solid black !important;
         }
         
-        .pdf-mode th {
-            padding: 5px !important;
-            font-weight: bold !important;
-            border: 1px solid #ccc !important;
-            font-size: 10px !important;
+        .pdf-mode th, .pdf-mode td {
+            padding: 3px 1px !important;
+            border: 1px solid #444 !important; /* خطوط واضحة جداً في الطباعة */
         }
 
-        .pdf-mode td {
-            padding: 4.5px 2px !important;
-            border: 1px solid #ddd !important;
-            vertical-align: middle !important;
-        }
-
-        .pdf-mode tr:nth-child(even) { background-color: #f7f7f7 !important; }
+        .pdf-mode tr:nth-child(even) { background-color: #f9f9f9 !important; }
         
         .pdf-mode tr.active-day, 
-        .pdf-mode tr.next-day, 
         .pdf-mode tr.finished {
             background-color: transparent !important;
             color: black !important;
             text-decoration: none !important;
-            border: none !important;
-            font-weight: normal !important;
+            border: 1px solid #444 !important;
         }
 
         .pdf-mode .eid-row {
-            background-color: #f0f0f0 !important;
+            background-color: #eee !important;
             color: black !important;
-            font-weight: bold !important;
-            border-top: 2px solid #999 !important;
-            font-size: 11px !important;
+            border-top: 2px solid black !important;
+            font-size: 10px !important;
         }
 
     </style>
@@ -203,11 +208,11 @@
 
     <div class="dashboard" data-html2canvas-ignore="true">
         <div class="dash-item">
-            <div style="font-size:0.9rem; color:#777">الوقت الحالي</div>
+            <div id="current-date" class="date-display">--</div>
             <div id="clock" class="time-big en-num">00:00:00</div>
         </div>
         <div class="dash-item">
-            <div id="event-label" style="font-size:0.9rem; color:#777">المتبقي</div>
+            <div id="event-label" class="date-display" style="color:#c0392b">المتبقي</div>
             <div id="countdown" class="timer-big en-num">--:--:--</div>
         </div>
     </div>
@@ -251,7 +256,7 @@
     const monthsAr = { 1: "شباط", 2: "آذار" };
     const daysAr = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
 
-    // البيانات الأصلية (تنسيق 12 ساعة)
+    // البيانات (تنسيق 12 ساعة)
     const imsakList = ["05.31","05.30","05.28","05.27","05.26","05.25","05.23","05.22","05.21","05.19","05.18","05.16","05.15","05.13","05.12","05.11","05.09","05.08","05.06","05.04","05.03","05.01","05.00","04.58","04.57","04.55","04.53","04.52","04.50"];
     const fajrList = ["05.41","05.40","05.38","05.37","05.36","05.35","05.33","05.32","05.31","05.29","05.28","05.26","05.25","05.23","05.22","05.21","05.19","05.18","05.16","05.14","05.13","05.11","05.10","05.08","05.07","05.05","05.03","05.02","05.00"];
     const maghribList = ["06.11","06.13","06.14","06.15","06.16","06.17","06.18","06.19","06.20","06.21","06.22","06.23","06.24","06.25","06.26","06.27","06.28","06.29","06.30","06.31","06.32","06.33","06.34","06.35","06.36","06.37","06.38","06.39","06.40"];
@@ -262,7 +267,6 @@
         let curr = new Date(startDate);
         curr.setDate(startDate.getDate() + i);
 
-        // تنسيق للعرض (استبدال النقطة بنقطتين)
         let imsak = (imsakList[i] || "").replace('.', ':');
         let fajr = (fajrList[i] || "").replace('.', ':');
         let maghrib = (maghribList[i] || "").replace('.', ':');
@@ -305,7 +309,6 @@
     let eidDate = new Date(startDate); eidDate.setDate(startDate.getDate() + ramadanLen);
     let eidTr = document.createElement('tr');
     eidTr.className = 'eid-row';
-    // صف العيد كما طلبت
     eidTr.innerHTML = `
         <td colspan="3" style="text-align: center; border-left: 1px solid rgba(255,255,255,0.4);">
             عيد الفطر المبارك - ${eidDate.getDate()} ${monthsAr[eidDate.getMonth()]}
@@ -317,31 +320,34 @@
     tBody.appendChild(eidTr);
 
     // ==========================================
-    // الساعة (مع تصحيح PM للغروب)
+    // الساعة والتاريخ
     // ==========================================
     function updateClock() {
         const n = new Date();
+        
+        // 1. تحديث الساعة
         document.getElementById('clock').innerText = n.toLocaleTimeString('en-US', {hour12:false});
         
+        // 2. تحديث التاريخ واليوم (جديد!)
+        const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').innerText = n.toLocaleDateString('ar-SY', dateOptions);
+
+        // 3. العداد التنازلي
         let target = null; let lbl = "";
+        let firstD = new Date(`${tableData[0].full}T${tableData[0].i}:00`);
         
-        // التحقق من أول يوم
-        let firstDayStr = tableData[0].full;
-        let firstImsak = new Date(`${firstDayStr}T${tableData[0].i}:00`);
-        
-        if (n < firstImsak) {
-            target = firstImsak; lbl = "المتبقي لبدء رمضان";
+        if (n < firstD) {
+            target = firstD; lbl = "المتبقي لبدء رمضان";
         } else {
             let tInfo = tableData.find(d => d.full === n.toISOString().split('T')[0]);
             if(tInfo) {
-                // إنشاء كائنات الوقت
                 let tI = new Date(`${tInfo.full}T${tInfo.i}:00`);
                 let tF = new Date(`${tInfo.full}T${tInfo.f}:00`);
                 
-                // للغروب: نحتاج تحويل 06:11 إلى 18:11 للحساب فقط
+                // تصحيح الغروب (PM)
                 let mParts = tInfo.m.split(':');
                 let tM = new Date(tInfo.full);
-                tM.setHours(parseInt(mParts[0]) + 12, parseInt(mParts[1]), 0); // إضافة 12 ساعة
+                tM.setHours(parseInt(mParts[0]) + 12, parseInt(mParts[1]), 0);
 
                 if(n < tI) { target = tI; lbl = "المتبقي للإمساك"; }
                 else if(n < tF) { target = tF; lbl = "المتبقي للفجر"; }
@@ -378,15 +384,14 @@
         const btn = document.getElementById('dlBtn');
         btn.innerText = "جاري التجهيز...";
         btn.disabled = true;
-
         el.classList.add('pdf-mode');
 
         const opt = {
-            margin:       [0.3, 0.4, 0.3, 0.4], 
-            filename:     'Ramadan_2026_Elazig.pdf',
-            image:        { type: 'jpeg', quality: 1 },
-            html2canvas:  { scale: 2, scrollY: 0 }, 
-            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            margin: [0.3, 0.4, 0.3, 0.4], 
+            filename: 'Ramadan_2026_Elazig.pdf',
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: { scale: 2, scrollY: 0 }, 
+            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
         };
 
         setTimeout(() => {
