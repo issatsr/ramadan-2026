@@ -32,7 +32,8 @@
         }
 
         .container {
-            max-width: 850px;
+            /* تم توسيع الجدول هنا ليكون عريضاً ومريحاً */
+            max-width: 950px; 
             margin: 0 auto;
             background: white;
             border-radius: 15px;
@@ -42,7 +43,7 @@
             position: relative;
         }
 
-        /* --- الهيدر --- */
+        /* --- الهيدر (الشاشة) --- */
         .header {
             background: linear-gradient(135deg, var(--primary), #0e3d23);
             color: white;
@@ -52,7 +53,7 @@
         .header h1 { font-family: 'Amiri', serif; margin: 0; font-size: 2.2rem; }
         .header h3 { margin: 5px 0 0; font-weight: normal; font-size: 1.1rem; }
 
-        /* --- الساعة --- */
+        /* --- الساعة (الشاشة) --- */
         .dashboard {
             display: flex;
             justify-content: center;
@@ -70,15 +71,27 @@
         .time-big { font-size: 1.8rem; color: var(--primary); font-weight: bold; }
         .timer-big { font-size: 1.3rem; color: #c0392b; font-weight: bold; }
 
-        /* --- الجدول --- */
+        /* --- الجدول (الشاشة) --- */
         table {
             width: 100%;
             border-collapse: collapse;
-            table-layout: fixed;
+            table-layout: fixed; /* تثبيت الأعمدة */
         }
         thead { background-color: var(--primary); color: white; }
-        th { padding: 12px 5px; font-weight: normal; text-align: center; }
-        td { padding: 10px 5px; border-bottom: 1px solid #eee; text-align: center; }
+        
+        th { 
+            padding: 12px 10px; /* زيادة الحشوة */
+            font-weight: normal; 
+            text-align: center; 
+            white-space: nowrap;
+        }
+        
+        td { 
+            padding: 10px 5px; 
+            border-bottom: 1px solid #eee; 
+            text-align: center; 
+            white-space: nowrap; /* يمنع تراكم الأوقات فوق بعضها */
+        }
         
         tr.active-day { background-color: #d5f5e3; border-left: 5px solid var(--primary); font-weight: bold; }
         tr.next-day { background-color: #fcf3cf; }
@@ -107,7 +120,7 @@
         .btn-download:hover { transform: scale(1.05); }
 
         /* ==================================================
-           تنسيق PDF
+           تنسيق PDF (مستقل ومضبوط لورقة A4)
            ================================================== */
         .pdf-mode {
             width: 100% !important;
@@ -116,6 +129,7 @@
             border: none !important;
             box-shadow: none !important;
             background: white !important;
+            max-width: none !important; /* إلغاء الحد الأقصى للعرض في الطباعة */
         }
 
         .pdf-mode .dashboard, 
@@ -364,14 +378,15 @@
         const btn = document.getElementById('dlBtn');
         btn.innerText = "جاري التجهيز...";
         btn.disabled = true;
+
         el.classList.add('pdf-mode');
 
         const opt = {
-            margin: [0.3, 0.4, 0.3, 0.4], 
-            filename: 'Ramadan_2026_Elazig.pdf',
-            image: { type: 'jpeg', quality: 1 },
-            html2canvas: { scale: 2, scrollY: 0 }, 
-            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            margin:       [0.3, 0.4, 0.3, 0.4], 
+            filename:     'Ramadan_2026_Elazig.pdf',
+            image:        { type: 'jpeg', quality: 1 },
+            html2canvas:  { scale: 2, scrollY: 0 }, 
+            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
         };
 
         setTimeout(() => {
