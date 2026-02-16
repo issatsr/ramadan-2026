@@ -6,6 +6,7 @@
     <title>إمساكية رمضان 2026 - إيلازيغ</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
@@ -292,6 +293,9 @@
         const d = String(date.getDate()).padStart(2, '0');
         return `${y}-${m}-${d}`;
     }
+    function buildScheduleDate(dateKey, hhmm24) {
+        return new Date(`${dateKey}T${hhmm24}:00`);
+    }
     function to24HourString(rawTime, period) {
         const [rawHour, rawMinute] = rawTime.split('.').map(Number);
         let hour = rawHour;
@@ -310,8 +314,9 @@
         ];
         const weekday = new Intl.DateTimeFormat('ar-EG', { weekday: 'long' }).format(date);
         const day = String(date.getDate());
-        const month = arabicMonths[date.getMonth()];
+        const monthIndex = date.getMonth();
         const year = String(date.getFullYear());
+        const month = arabicMonths[monthIndex];
         return `${weekday}، ${day} ${month} ${year}`;
     }
 
@@ -326,9 +331,9 @@
         let imsak24 = to24HourString(imsakRaw[i], 'AM');
         let fajr24 = to24HourString(fajrRaw[i], 'AM');
         let maghrib24 = to24HourString(maghribRaw[i], 'PM');
-        let imsakDisplay = to12HourDisplay(imsakRaw[i], 'AM');
-        let fajrDisplay = to12HourDisplay(fajrRaw[i], 'AM');
-        let maghribDisplay = to12HourDisplay(maghribRaw[i], 'PM');
+        let imsakDisplay = to12HourDisplay(imsakRaw[i], 'ص');
+        let fajrDisplay = to12HourDisplay(fajrRaw[i], 'ص');
+        let maghribDisplay = to12HourDisplay(maghribRaw[i], 'م');
         let fullDate = toLocalDateKey(curr);
 
         // حفظ البيانات للعداد
@@ -371,34 +376,37 @@
     // ==========================================
     function updateClock() {
         const n = new Date();
-        const timeNow = n.toLocaleTimeString('en-US', {
+        const baseTime = n.toLocaleTimeString('en-US', {
             hour12: true,
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit'
         });
+        const periodAr = n.getHours() < 12 ? 'ص' : 'م';
+        const timeNow = `${baseTime.replace(/\s?(AM|PM)$/i, '')} ${periodAr}`;
         const dateNow = formatArabicLocalDate(n);
         document.getElementById('clock').innerHTML = `<span class="en-num">${timeNow}</span><div class="date-display">${dateNow}</div>`;
 
         let target = null;
         let lbl = "";
 
-        // أول يوم رمضان (الإمساك)
+        // أول يوم رمضان (بداية اليوم)
         let firstDayStr = tableData[0].fullDate;
-        let firstImsak = new Date(`${firstDayStr}T${tableData[0].imsak24}:00`);
+        let firstDayStart = buildScheduleDate(firstDayStr, "00:00");
+        let firstImsak = buildScheduleDate(firstDayStr, tableData[0].imsak24);
 
-        if (n < firstImsak) {
+        if (n < firstDayStart) {
             // نحن قبل رمضان
-            target = firstImsak;
+            target = firstDayStart;
             lbl = "المتبقي لبدء رمضان";
         } else {
             // نحن داخل رمضان (أو انتهى)
             let todayInfo = tableData.find(d => d.fullDate === toLocalDateKey(n));
 
             if(todayInfo) {
-                let tImsak = new Date(`${todayInfo.fullDate}T${todayInfo.imsak24}:00`);
-                let tFajr = new Date(`${todayInfo.fullDate}T${todayInfo.fajr24}:00`);
-                let tMaghrib = new Date(`${todayInfo.fullDate}T${todayInfo.maghrib24}:00`);
+                let tImsak = buildScheduleDate(todayInfo.fullDate, todayInfo.imsak24);
+                let tFajr = buildScheduleDate(todayInfo.fullDate, todayInfo.fajr24);
+                let tMaghrib = buildScheduleDate(todayInfo.fullDate, todayInfo.maghrib24);
 
                 if (n < tImsak) { target = tImsak; lbl = "المتبقي للإمساك"; }
                 else if (n < tFajr) { target = tFajr; lbl = "المتبقي للفجر"; }
@@ -409,7 +417,7 @@
             if(!target) {
                 let nextDayInfo = tableData.find(d => d.fullDate > toLocalDateKey(n));
                 if (nextDayInfo) {
-                    target = new Date(`${nextDayInfo.fullDate}T${nextDayInfo.imsak24}:00`);
+                    target = buildScheduleDate(nextDayInfo.fullDate, nextDayInfo.imsak24);
                     lbl = "إمساك الغد";
                 } else {
                     lbl = "عيد مبارك";
@@ -486,14 +494,30 @@
         el.classList.add('pdf-mode');
 
         setTimeout(() => {
-            html2pdf().set({
-                margin: [0.15, 0.15, 0.15, 0.15],
-                filename: 'Ramadan_2026_Elazig.pdf',
-                image: { type: 'jpeg', quality: 1 },
-                html2canvas: { scale: 2, scrollY: 0, useCORS: true },
-                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['avoid-all'] }
-            }).from(el).save().finally(() => {
+            html2canvas(el, { scale: 2, scrollY: 0, useCORS: true }).then((canvas) => {
+                const pdf = new window.jspdf.jsPDF({
+                    orientation: 'portrait',
+                    unit: 'pt',
+                    format: 'a4'
+                });
+
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const margin = 10;
+                const maxWidth = pageWidth - (margin * 2);
+                const maxHeight = pageHeight - (margin * 2);
+
+                const imgWidth = canvas.width;
+                const imgHeight = canvas.height;
+                const ratio = Math.min(maxWidth / imgWidth, maxHeight / imgHeight);
+                const renderWidth = imgWidth * ratio;
+                const renderHeight = imgHeight * ratio;
+                const x = (pageWidth - renderWidth) / 2;
+                const y = (pageHeight - renderHeight) / 2;
+
+                pdf.addImage(canvas.toDataURL('image/jpeg', 1.0), 'JPEG', x, y, renderWidth, renderHeight);
+                pdf.save('Ramadan_2026_Elazig.pdf');
+            }).finally(() => {
                 el.classList.remove('pdf-mode');
                 setDownloadButtonsState(false);
             });
