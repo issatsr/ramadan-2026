@@ -24,7 +24,7 @@
             text-align: center;
         }
 
-        /* تنسيق الأرقام الإنجليزية */
+        /* الأرقام بالإنجليزية */
         .en-num {
             font-family: 'Segoe UI', Tahoma, sans-serif;
             font-weight: 700;
@@ -82,10 +82,10 @@
         
         th, td { 
             padding: 10px 5px; 
-            border: 1px solid #eee; /* حدود خفيفة لكل خلية */
+            border: 1px solid #eee; 
             text-align: center;
             vertical-align: middle;
-            white-space: nowrap; /* يمنع نزول النص لسطر ثاني */
+            white-space: nowrap; 
         }
 
         th { font-weight: normal; border-color: rgba(255,255,255,0.2); }
@@ -150,6 +150,7 @@
         .pdf-mode table {
             font-size: 10px !important;
             border: 2px solid #444 !important;
+            table-layout: fixed !important;
         }
 
         .pdf-mode thead {
@@ -159,7 +160,7 @@
         }
         
         .pdf-mode th, .pdf-mode td {
-            border: 1px solid #888 !important; /* حدود واضحة في الطباعة */
+            border: 1px solid #888 !important;
             padding: 4px !important;
         }
 
@@ -183,7 +184,7 @@
         }
         .pdf-mode .eid-row td {
             color: black !important;
-            border: none !important; /* إزالة الحدود الداخلية لصف العيد */
+            border: none !important;
         }
 
     </style>
@@ -233,7 +234,7 @@
 
 <script>
     // ==========================================
-    // البيانات
+    // البيانات الدقيقة من المستخدم
     // ==========================================
     const startDate = new Date(2026, 1, 19); 
     const ramadanLen = 29;
@@ -241,22 +242,35 @@
     const monthsAr = { 1: "شباط", 2: "آذار" };
     const daysAr = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
     
-    let imsakMins = 37; let maghribMins = 5;
+    // قوائم الأوقات (تم استبدال النقطة بنقطتين للبرمجة)
+    const imsakList = [
+        "05:31", "05:30", "05:28", "05:27", "05:26", "05:25", "05:23", "05:22", "05:21", "05:19",
+        "05:18", "05:16", "05:15", "05:13", "05:12", "05:11", "05:09", "05:08", "05:06", "05:04",
+        "05:03", "05:01", "05:00", "04:58", "04:57", "04:55", "04:53", "04:52", "04:50"
+    ];
+
+    const fajrList = [
+        "05:41", "05:40", "05:38", "05:37", "05:36", "05:35", "05:33", "05:32", "05:31", "05:29",
+        "05:28", "05:26", "05:25", "05:23", "05:22", "05:21", "05:19", "05:18", "05:16", "05:14",
+        "05:13", "05:11", "05:10", "05:08", "05:07", "05:05", "05:03", "05:02", "05:00"
+    ];
+
+    const maghribList = [
+        "06:11", "06:13", "06:14", "06:15", "06:16", "06:17", "06:18", "06:19", "06:20", "06:21",
+        "06:22", "06:23", "06:24", "06:25", "06:26", "06:27", "06:28", "06:29", "06:30", "06:31",
+        "06:32", "06:33", "06:34", "06:35", "06:36", "06:37", "06:38", "06:39", "06:40"
+    ];
+
     const tableData = [];
 
     for (let i = 0; i < ramadanLen; i++) {
         let curr = new Date(startDate);
         curr.setDate(startDate.getDate() + i);
 
-        imsakMins -= 1.2; maghribMins += 1.1;
-        
-        let iH = 5; let iM = Math.floor(imsakMins);
-        let mH = 18; let mM = Math.floor(maghribMins);
-        if(mM >= 60) { mH++; mM -= 60; }
-
-        let imsak = `0${iH}:${iM.toString().padStart(2, '0')}`;
-        let fajr = `0${iH}:${(iM+10).toString().padStart(2, '0')}`;
-        let maghrib = `${mH}:${mM.toString().padStart(2, '0')}`;
+        // جلب البيانات من القوائم
+        let imsak = imsakList[i];
+        let fajr = fajrList[i];
+        let maghrib = maghribList[i];
 
         tableData.push({
             r: i + 1,
