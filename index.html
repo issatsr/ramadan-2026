@@ -28,6 +28,7 @@
             font-family: 'Segoe UI', Tahoma, sans-serif;
             font-weight: 700;
             direction: ltr;
+            display: inline-block;
         }
 
         .container {
@@ -83,6 +84,13 @@
         tr.next-day { background-color: #fcf3cf; }
         tr.finished { background-color: #f9f9f9; color: #aaa; text-decoration: line-through; text-decoration-color: #c0392b; }
         
+        /* تنسيق صف العيد */
+        .eid-row {
+            background: linear-gradient(90deg, #f1c40f, #f39c12);
+            color: white;
+            font-weight: bold;
+        }
+
         /* زر التحميل */
         .btn-area { margin: 30px; }
         .btn-download {
@@ -101,7 +109,7 @@
 
         /* ==================================================
            تنسيق PDF
-           ================================================= */
+           ================================================== */
         .pdf-mode {
             width: 100% !important;
             margin: 0 !important;
@@ -162,29 +170,16 @@
             font-weight: normal !important;
         }
 
-        /* تنسيق خاص جداً لصف العيد */
-        .eid-row {
-            background: linear-gradient(90deg, #f1c40f, #f39c12);
-            color: white;
-            font-weight: bold;
-        }
         .pdf-mode .eid-row {
             background-color: #f0f0f0 !important;
             color: black !important;
+            font-weight: bold !important;
             border-top: 2px solid #999 !important;
             background-image: none !important;
         }
-
-        /* حاوية مرنة لصف العيد لضمان التوسط */
-        .eid-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
+        .pdf-mode .eid-row td {
+            color: black !important;
         }
-        .eid-side { width: 33%; } /* مساحات متساوية لضمان التوسط */
-        .eid-center { width: 34%; text-align: center; }
-        .eid-left { text-align: left; }
 
     </style>
 </head>
@@ -265,7 +260,6 @@
         });
     }
 
-    // العيد
     let eidDate = new Date(startDate);
     eidDate.setDate(startDate.getDate() + ramadanLen);
     
@@ -295,23 +289,17 @@
         tBody.appendChild(tr);
     });
 
-    // --- صف العيد بالتصميم الجديد ---
+    // --- صف العيد (كله عربي ما عدا الرقم) ---
     let eidTr = document.createElement('tr');
     eidTr.className = 'eid-row';
-    // نستخدم خلية واحدة بعرض الجدول كله ثم نقسمها من الداخل
+    
+    // تقسيم الصف إلى خليتين كبيرتين (3 أعمدة يمين + 3 أعمدة يسار)
     eidTr.innerHTML = `
-        <td colspan="6" style="padding: 8px;">
-            <div class="eid-container">
-                <div class="eid-side eid-left">
-                   <span class="en-num" style="font-size:0.9em;">Friday - Prayer: 06:10 AM</span>
-                </div>
-                
-                <div class="eid-center">
-                    عيد الفطر المبارك - ${eidDate.getDate()} ${monthsAr[eidDate.getMonth()]}
-                </div>
-
-                <div class="eid-side"></div>
-            </div>
+        <td colspan="3" style="text-align: right; padding-right: 15px;">
+            عيد الفطر المبارك - ${eidDate.getDate()} ${monthsAr[eidDate.getMonth()]}
+        </td>
+        <td colspan="3" style="text-align: left; padding-left: 15px;">
+            الجمعة | صلاة العيد: <span class="en-num">06:10</span>
         </td>
     `;
     tBody.appendChild(eidTr);
