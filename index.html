@@ -24,13 +24,12 @@
             text-align: center;
         }
 
-        /* إصلاح الأرقام لتكون في نفس السطر */
+        /* تنسيق الأرقام الإنجليزية */
         .en-num {
             font-family: 'Segoe UI', Tahoma, sans-serif;
             font-weight: 700;
-            direction: ltr;
-            display: inline; /* هام جداً: يبقي الرقم في نفس السطر */
-            unicode-bidi: embed;
+            direction: ltr; 
+            display: inline-block;
         }
 
         .container {
@@ -72,27 +71,24 @@
         .time-big { font-size: 1.8rem; color: var(--primary); font-weight: bold; }
         .timer-big { font-size: 1.3rem; color: #c0392b; font-weight: bold; }
 
-        /* --- الجدول (تصحيح التخطيط) --- */
+        /* --- الجدول --- */
         table {
             width: 100%;
             border-collapse: collapse;
-            table-layout: fixed; /* إجبار الأعمدة على احترام العرض المحدد */
+            table-layout: fixed; /* ضروري جداً لاحترام العروض */
         }
+        
         thead { background-color: var(--primary); color: white; }
         
-        th { 
-            padding: 12px 5px; 
-            font-weight: normal; 
+        th, td { 
+            padding: 10px 5px; 
+            border: 1px solid #eee; /* حدود خفيفة لكل خلية */
             text-align: center;
-            border-left: 1px solid rgba(255,255,255,0.1); /* فاصل خفيف بين العناوين */
+            vertical-align: middle;
+            white-space: nowrap; /* يمنع نزول النص لسطر ثاني */
         }
-        
-        td { 
-            padding: 8px 5px; 
-            border-bottom: 1px solid #eee; 
-            text-align: center; /* توسيط المحتوى */
-            border-left: 1px solid #f0f0f0; /* فاصل خفيف بين الأعمدة */
-        }
+
+        th { font-weight: normal; border-color: rgba(255,255,255,0.2); }
         
         tr.active-day { background-color: #d5f5e3; font-weight: bold; }
         tr.next-day { background-color: #fcf3cf; }
@@ -105,10 +101,9 @@
             font-weight: bold;
         }
         .eid-row td {
-            padding: 12px 5px !important;
-            font-size: 1rem;
-            vertical-align: middle;
             border: none;
+            padding: 12px;
+            font-size: 1rem;
         }
 
         /* زر التحميل */
@@ -128,7 +123,7 @@
         .btn-download:hover { transform: scale(1.05); }
 
         /* ==================================================
-           تنسيق PDF
+           تنسيق PDF (مضبوط بالمسطرة)
            ================================================== */
         .pdf-mode {
             width: 100% !important;
@@ -147,7 +142,6 @@
             color: black !important;
             padding: 0 0 10px 0 !important;
             border-bottom: 2px solid var(--primary) !important;
-            text-align: center !important;
             margin-bottom: 5px !important;
         }
         .pdf-mode .header h1 { font-size: 1.6rem !important; color: var(--primary) !important; margin-bottom: 2px !important; }
@@ -155,29 +149,18 @@
 
         .pdf-mode table {
             font-size: 10px !important;
-            width: 100% !important;
-            border: 1px solid #999 !important;
-            table-layout: fixed !important;
+            border: 2px solid #444 !important;
         }
 
         .pdf-mode thead {
             background-color: #eee !important;
             color: black !important;
-            border-bottom: 2px solid #999 !important;
+            border-bottom: 2px solid #444 !important;
         }
         
-        .pdf-mode th {
-            padding: 5px !important;
-            font-weight: bold !important;
-            border: 1px solid #ccc !important;
-            text-align: center !important;
-        }
-
-        .pdf-mode td {
+        .pdf-mode th, .pdf-mode td {
+            border: 1px solid #888 !important; /* حدود واضحة في الطباعة */
             padding: 4px !important;
-            border: 1px solid #ddd !important;
-            vertical-align: middle !important;
-            text-align: center !important;
         }
 
         .pdf-mode tr:nth-child(even) { background-color: #f7f7f7 !important; }
@@ -195,14 +178,12 @@
         .pdf-mode .eid-row {
             background-color: #f0f0f0 !important;
             color: black !important;
-            font-weight: bold !important;
-            border-top: 2px solid #999 !important;
+            border-top: 2px solid #444 !important;
             background-image: none !important;
         }
         .pdf-mode .eid-row td {
             color: black !important;
-            font-size: 11px !important;
-            border: 1px solid #ccc !important;
+            border: none !important; /* إزالة الحدود الداخلية لصف العيد */
         }
 
     </style>
@@ -227,14 +208,16 @@
     </div>
 
     <table>
+        <colgroup>
+            <col style="width: 8%;">  <col style="width: 12%;"> <col style="width: 20%;"> <col style="width: 20%;"> <col style="width: 20%;"> <col style="width: 20%;"> </colgroup>
         <thead>
             <tr>
-                <th width="8%">رمضان</th>
-                <th width="12%">اليوم</th>
-                <th width="20%">التاريخ</th>
-                <th width="20%">الإمساك</th>
-                <th width="20%">الفجر</th>
-                <th width="20%">الغروب</th>
+                <th>رمضان</th>
+                <th>اليوم</th>
+                <th>التاريخ</th>
+                <th>الإمساك</th>
+                <th>الفجر</th>
+                <th>الغروب</th>
             </tr>
         </thead>
         <tbody id="tableBody">
@@ -313,7 +296,7 @@
         tBody.appendChild(tr);
     });
 
-    // --- صف العيد (التصميم المعدل: سطر واحد مستقيم) ---
+    // --- صف العيد (محاذاة متساوية) ---
     let eidTr = document.createElement('tr');
     eidTr.className = 'eid-row';
     
