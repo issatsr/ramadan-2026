@@ -9,8 +9,8 @@
     
     <style>
         :root {
-            --primary: #145A32; /* أخضر غامق ملكي */
-            --gold: #D4AC0D;    /* ذهبي */
+            --primary: #145A32;
+            --gold: #D4AC0D;
             --bg: #fdfbf7;
             --text: #333;
         }
@@ -105,12 +105,12 @@
         .btn-download:hover { transform: scale(1.05); }
 
         /* ==================================================
-           تنسيق PDF (متباعد وجميل)
+           تنسيق PDF (مضبوط للصفحة الواحدة)
            ================================================== */
         .pdf-mode {
             width: 100% !important;
             margin: 0 !important;
-            padding: 20px !important; /* هوامش داخلية للورقة */
+            padding: 20px !important;
             border: none !important;
             box-shadow: none !important;
             background: white !important;
@@ -119,50 +119,45 @@
         .pdf-mode .dashboard, 
         .pdf-mode .btn-area { display: none !important; }
 
-        /* هيدر بسيط وأنيق للطباعة */
         .pdf-mode .header {
             background: white !important;
             color: black !important;
-            padding: 0 0 15px 0 !important;
+            padding: 0 0 10px 0 !important; /* تقليل الهامش العلوي */
             border-bottom: 2px solid var(--primary) !important;
             text-align: center !important;
-            margin-bottom: 10px !important;
+            margin-bottom: 5px !important;
         }
-        .pdf-mode .header h1 { font-size: 1.8rem !important; color: var(--primary) !important; }
-        .pdf-mode .header h3 { font-size: 1rem !important; color: #555 !important; }
+        .pdf-mode .header h1 { font-size: 1.6rem !important; color: var(--primary) !important; margin-bottom: 2px !important; }
+        .pdf-mode .header h3 { font-size: 0.9rem !important; color: #555 !important; }
 
-        /* جدول متناسق للطباعة */
         .pdf-mode table {
-            font-size: 11px !important; /* حجم خط مناسب للقراءة */
+            font-size: 10px !important; /* تصغير الخط قليلاً جداً لضمان السعة */
             width: 100% !important;
-            border: 1px solid #999 !important; /* إطار خارجي */
+            border: 1px solid #999 !important;
         }
 
         .pdf-mode thead {
-            background-color: #eee !important; /* رمادي فاتح للهيدر */
+            background-color: #eee !important;
             color: black !important;
             border-bottom: 2px solid #999 !important;
         }
         
         .pdf-mode th {
-            padding: 8px !important; /* تباعد في العنوان */
+            padding: 5px !important;
             font-weight: bold !important;
             border: 1px solid #ccc !important;
+            font-size: 10px !important;
         }
 
-        /* تباعد الأسطر (هنا السر في التباعد) */
+        /* ضبط التباعد لحل مشكلة الصفحة الثانية */
         .pdf-mode td {
-            padding: 6px 4px !important; /* زيادة التباعد العمودي */
+            padding: 4.5px 2px !important; /* تقليل الارتفاع من 6 إلى 4.5 */
             border: 1px solid #ddd !important;
             vertical-align: middle !important;
         }
 
-        /* تلوين الأسطر (Zebra Striping) للجمالية */
-        .pdf-mode tr:nth-child(even) {
-            background-color: #f7f7f7 !important;
-        }
+        .pdf-mode tr:nth-child(even) { background-color: #f7f7f7 !important; }
         
-        /* إزالة ألوان الحالة (اليوم الحالي والمنتهي) عند الطباعة */
         .pdf-mode tr.active-day, 
         .pdf-mode tr.next-day, 
         .pdf-mode tr.finished {
@@ -173,13 +168,12 @@
             font-weight: normal !important;
         }
 
-        /* صف العيد في الطباعة */
         .pdf-mode .eid-row {
             background-color: #f0f0f0 !important;
             color: black !important;
             font-weight: bold !important;
             border-top: 2px solid #999 !important;
-            font-size: 12px !important;
+            font-size: 11px !important;
         }
 
     </style>
@@ -206,19 +200,18 @@
     <table>
         <thead>
             <tr>
-                <th width="10%">رمضان</th>
-                <th width="15%">اليوم</th>
-                <th width="20%">التاريخ</th>
-                <th width="15%">الإمساك</th>
-                <th width="15%">الفجر</th>
-                <th width="25%">الغروب</th>
+                <th width="8%">رمضان</th>
+                <th width="14%">اليوم</th>
+                <th width="26%">التاريخ</th> <th width="16%">الإمساك</th>
+                <th width="16%">الفجر</th>
+                <th width="20%">الغروب</th>
             </tr>
         </thead>
         <tbody id="tableBody">
             </tbody>
     </table>
     
-    <div style="height: 10px;"></div>
+    <div style="height: 5px;"></div>
 </div>
 
 <div class="btn-area">
@@ -284,8 +277,7 @@
         tr.innerHTML = `
             <td class="en-num">${row.r}</td>
             <td>${row.d}</td>
-            <td>${row.dt}</td>
-            <td class="en-num">${row.i}</td>
+            <td style="white-space: nowrap;">${row.dt}</td> <td class="en-num">${row.i}</td>
             <td class="en-num">${row.f}</td>
             <td class="en-num">${row.m}</td>
         `;
@@ -346,7 +338,7 @@
     updateClock();
 
     // ==========================================
-    // PDF (تنسيق متباعد لكامل الصفحة)
+    // PDF (النسخة النهائية المضبوطة)
     // ==========================================
     function downloadPDF() {
         const el = document.getElementById('capture-area');
@@ -357,7 +349,7 @@
         el.classList.add('pdf-mode');
 
         const opt = {
-            margin:       [0.3, 0.4, 0.3, 0.4], // هوامش موزونة
+            margin:       [0.3, 0.4, 0.3, 0.4], 
             filename:     'Ramadan_2026_Elazig.pdf',
             image:        { type: 'jpeg', quality: 1 },
             html2canvas:  { scale: 2, scrollY: 0 }, 
