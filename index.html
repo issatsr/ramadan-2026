@@ -3,105 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ramadan 2026 - Elazığ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Reem+Kufi:wght@700&display=swap" rel="stylesheet">
+    <title>إمساكية رمضان 2026 - إيلازيغ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
         :root {
-            --primary: #145A32; /* أخضر إسلامي غامق */
-            --gold: #D4AC0D;    /* ذهبي */
-            --cream: #FEF9E7;   /* كريمي للخلفية */
-            --white: #ffffff;
-            --red-strike: #C0392B;
+            --primary: #1e5631;  /* أخضر غامق */
+            --gold: #c5a059;     /* ذهبي هادئ */
+            --bg: #fdfbf7;       /* أبيض كريمي */
+            --red-strike: #c0392b;
+            --active-bg: #d5f5e3; /* أخضر فاتح لليوم الحالي */
+            --next-bg: #fcf3cf;   /* أصفر فاتح للغد */
         }
 
         body {
             font-family: 'Cairo', sans-serif;
-            background-color: var(--cream);
-            background-image: url("https://www.transparenttextures.com/patterns/arabesque.png"); /* نمط إسلامي خفيف */
+            background-color: var(--bg);
             margin: 0;
             padding: 20px;
             color: #333;
+            text-align: center;
         }
 
-        /* فرض الأرقام الإنجليزية */
+        /* تنسيق الأرقام الإنجليزية */
         .en-num {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-weight: bold;
+            font-weight: 600;
             direction: ltr;
+            unicode-bidi: embed;
         }
 
         .container {
-            max-width: 850px;
+            max-width: 800px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border: 1px solid #e0e0e0;
             overflow: hidden;
-            border: 2px solid var(--gold);
+            position: relative;
         }
 
-        /* الهيدر الفخم */
+        /* رأس الصفحة المزخرف */
         .header {
-            background: linear-gradient(135deg, var(--primary), #0B3B24);
+            background: linear-gradient(135deg, var(--primary), #145a32);
             color: white;
-            padding: 20px;
-            text-align: center;
-            position: relative;
-            border-bottom: 5px solid var(--gold);
+            padding: 25px;
+            border-bottom: 4px solid var(--gold);
         }
 
         .header h1 {
-            font-family: 'Reem Kufi', sans-serif;
+            font-family: 'Amiri', serif;
             margin: 0;
             font-size: 2.2rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .header h3 {
             margin: 5px 0 0;
             font-weight: normal;
+            font-size: 1.1rem;
             opacity: 0.9;
         }
 
-        /* الساعة والعداد */
-        .time-panel {
+        /* لوحة العداد والساعة */
+        .dashboard {
             display: flex;
-            justify-content: space-around;
-            align-items: center;
+            justify-content: center;
+            gap: 20px;
             padding: 20px;
-            background: #f8f9fa;
+            background: #fff;
             border-bottom: 1px solid #eee;
             flex-wrap: wrap;
-            gap: 15px;
         }
 
-        .clock-box, .countdown-box {
-            text-align: center;
-            flex: 1;
-            min-width: 250px;
+        .dash-card {
+            background: #f8f9fa;
+            padding: 15px 25px;
+            border-radius: 10px;
+            border: 1px solid #eee;
+            min-width: 200px;
         }
 
-        .clock-time {
-            font-size: 2.5rem;
+        .clock-display {
+            font-size: 2.2rem;
             color: var(--primary);
-            font-weight: 800;
-            font-family: 'Segoe UI', monospace; /* للأرقام */
-            text-shadow: 1px 1px 0px var(--gold);
-        }
-
-        .countdown-text {
-            font-size: 1.1rem;
-            color: #555;
-            margin-bottom: 5px;
-        }
-
-        .countdown-timer {
-            font-size: 1.5rem;
-            color: #d35400;
             font-weight: bold;
-            font-family: 'Segoe UI', monospace;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .timer-display {
+            font-size: 1.4rem;
+            color: #d35400;
+            font-family: 'Segoe UI', sans-serif;
+            font-weight: bold;
         }
 
         /* الجدول */
@@ -116,87 +112,80 @@
             color: white;
         }
 
-        th {
-            padding: 12px;
-            font-weight: bold;
-        }
-
-        td {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            text-align: center;
-        }
-
-        /* تنسيق الصفوف */
-        tbody tr:nth-child(even) { background-color: #fcfcfc; }
+        th { padding: 12px; font-weight: normal; }
+        td { padding: 10px 8px; border-bottom: 1px solid #eee; }
 
         /* الأيام المنتهية */
         tr.finished {
-            background-color: #ffebee; /* أحمر فاتح جداً */
-            color: #999;
+            background-color: #fafafa;
+            color: #aaa;
             text-decoration: line-through;
             text-decoration-color: var(--red-strike);
         }
 
         /* اليوم الحالي */
         tr.active-day {
-            background-color: #dcedc8 !important; /* أخضر فاتح */
-            border-left: 5px solid var(--primary);
-            border-right: 5px solid var(--primary);
+            background-color: var(--active-bg) !important;
             font-weight: bold;
-            transform: scale(1.01);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--primary);
+            border-right: 4px solid var(--primary);
         }
 
         /* يوم الغد */
         tr.next-day {
-            background-color: #fff9c4 !important; /* أصفر فاتح */
+            background-color: var(--next-bg) !important;
         }
 
         /* صف العيد */
         .eid-row {
-            background: linear-gradient(90deg, var(--gold), #f39c12);
-            color: #fff;
+            background: linear-gradient(90deg, #f1c40f, #f39c12);
+            color: white;
             font-weight: bold;
-            font-size: 1.1rem;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
 
         /* زر التحميل */
-        .btn-container {
-            text-align: center;
-            padding: 20px;
-        }
-
+        .btn-area { margin: 25px; }
         .btn-download {
             background-color: var(--primary);
             color: white;
             border: none;
-            padding: 12px 30px;
-            font-size: 1.1rem;
+            padding: 12px 35px;
             border-radius: 50px;
-            cursor: pointer;
             font-family: 'Cairo', sans-serif;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(20, 90, 50, 0.3);
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(30, 86, 49, 0.3);
+            transition: transform 0.2s;
+        }
+        .btn-download:hover { transform: scale(1.05); background-color: #145a32; }
+
+        /* =========================================
+           تنسيقات خاصة لوضع الـ PDF (الطباعة)
+           هذه الكلاسات يتم تفعيلها بالجافاسكريبت عند التحميل
+           لضمان ظهور الصفحة واحدة
+        ========================================= */
+        .pdf-mode {
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
         }
 
-        .btn-download:hover {
-            background-color: var(--gold);
-            transform: translateY(-2px);
+        .pdf-mode .header {
+            padding: 10px !important;
+            border-bottom: 2px solid var(--gold) !important;
         }
 
-        /* تحسينات للطباعة PDF */
-        @media print {
-            body { background: white; }
-            .container { box-shadow: none; border: none; width: 100%; }
-            .btn-container, .time-panel { display: none !important; }
-            table { font-size: 10px !important; } /* تصغير الخط للصفحة الواحدة */
-            th, td { padding: 4px !important; }
-        }
+        .pdf-mode .header h1 { font-size: 1.5rem !important; }
+        .pdf-mode .header h3 { font-size: 0.9rem !important; }
+
+        .pdf-mode table { font-size: 10px !important; } /* تصغير الخط */
+        .pdf-mode th, .pdf-mode td { padding: 5px 2px !important; }
+        
+        .pdf-mode .dashboard, 
+        .pdf-mode .btn-area { display: none !important; } /* إخفاء الأزرار والساعة */
 
     </style>
 </head>
@@ -208,23 +197,23 @@
         <h3>ولاية إيلازيغ - تركيا (Elazığ)</h3>
     </div>
 
-    <div class="time-panel" data-html2canvas-ignore="true">
-        <div class="clock-box">
-            <div style="color:#777; font-size:0.9rem;">الوقت الحالي</div>
-            <div id="clock" class="clock-time">00:00:00</div>
+    <div class="dashboard" data-html2canvas-ignore="true">
+        <div class="dash-card">
+            <div style="font-size:0.9rem; color:#666">الوقت الآن</div>
+            <div id="clock" class="clock-display">00:00:00</div>
         </div>
-        <div class="countdown-box">
-            <div id="event-label" class="countdown-text">جاري الحساب...</div>
-            <div id="countdown" class="countdown-timer">00:00:00</div>
+        <div class="dash-card">
+            <div id="event-label" style="font-size:0.9rem; color:#666">المتبقي</div>
+            <div id="countdown" class="timer-display">--:--:--</div>
         </div>
     </div>
 
-    <table id="ramadanTable">
+    <table>
         <thead>
             <tr>
                 <th>رمضان</th>
                 <th>اليوم</th>
-                <th>الشهر</th>
+                <th>التاريخ</th>
                 <th>الإمساك</th>
                 <th>الفجر</th>
                 <th>الغروب</th>
@@ -233,13 +222,12 @@
         <tbody id="tableBody">
             </tbody>
     </table>
+    
+    <div style="height: 20px;"></div>
 </div>
 
-<div class="btn-container">
-    <button class="btn-download" onclick="downloadPDF()">
-        <span>تحميل الإمساكية PDF</span>
-        <span>📄</span>
-    </button>
+<div class="btn-area">
+    <button class="btn-download" onclick="downloadPDF()">تحميل الإمساكية PDF 📥</button>
 </div>
 
 <script>
@@ -247,84 +235,81 @@
     // 1. الإعدادات والبيانات
     // ==========================================
     
-    // بداية رمضان: الخميس 19 شباط 2026
-    const startYear = 2026;
-    const startMonth = 1; // 0=Jan, 1=Feb
-    const startDay = 19; 
+    // البداية: الخميس 19 شباط 2026
+    const startDate = new Date(2026, 1, 19); // الشهر 1 يعني شباط
+    const ramadanDays = 29; // عدد أيام رمضان
     
-    const startDate = new Date(startYear, startMonth, startDay);
-    const ramadanData = [];
+    // أسماء الأشهر بالعربية كما طلبت
+    const monthsAr = {
+        1: "شباط", // February
+        2: "آذار"  // March
+    };
 
-    const arDays = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+    const daysAr = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
     
-    // توقيتات افتراضية (يجب تعديل الدقائق عند صدور الرسمية)
-    // تبدأ من 19 شباط
-    let imsakMins = 37; // 05:37 تقريبي
-    let maghribMins = 5; // 18:05 تقريبي
+    const tableData = [];
 
-    // توليد 30 يوم
-    for (let i = 0; i < 30; i++) {
+    // توقيتات افتراضية تقريبية لإيلازيغ (بداية من 19 شباط)
+    let imsakMins = 37; // 05:37
+    let maghribMins = 5; // 18:05
+
+    for (let i = 0; i < ramadanDays; i++) {
         let current = new Date(startDate);
         current.setDate(startDate.getDate() + i);
 
-        // محاكاة تغير الوقت (نقصان الفجر وزيادة المغرب)
+        // تعديل التوقيت يومياً
         imsakMins -= 1.2; 
         maghribMins += 1.1;
 
-        // حساب الساعات والدقائق
         let iH = 5; let iM = Math.floor(imsakMins);
         let mH = 18; let mM = Math.floor(maghribMins);
-        
-        // معالجة الدقائق فوق الـ 60
+
         if (mM >= 60) { mH++; mM -= 60; }
-        if (iM < 0) { iH--; iM += 60; } // احتمال نادر
-
-        // تنسيق الأرقام 00:00
-        let imsakStr = `0${iH}:${iM.toString().padStart(2, '0')}`;
-        let fajrStr  = `0${iH}:${(iM+10).toString().padStart(2, '0')}`; 
-        let maghribStr = `${mH}:${mM.toString().padStart(2, '0')}`;
-
-        // تحديد اسم الشهر (Shubat أو Adhar)
-        let monthName = (current.getMonth() === 1) ? "Shubat" : "Adhar";
         
-        ramadanData.push({
+        // تنسيق الوقت
+        let imsak = `0${iH}:${iM.toString().padStart(2, '0')}`;
+        let fajr = `0${iH}:${(iM+10).toString().padStart(2, '0')}`;
+        let maghrib = `${mH}:${mM.toString().padStart(2, '0')}`;
+
+        // التاريخ العربي (شباط - آذار)
+        let mIndex = current.getMonth();
+        let dayNum = current.getDate();
+        let monthName = monthsAr[mIndex];
+
+        tableData.push({
             ramadan: i + 1,
-            dayAr: arDays[current.getDay()],
-            dateDisplay: `${current.getDate()} ${monthName}`, // 19 Shubat
-            fullDate: current.toISOString().split('T')[0], // 2026-02-19
-            imsak: imsakStr,
-            fajr: fajrStr,
-            maghrib: maghribStr
+            dayName: daysAr[current.getDay()],
+            dateStr: `${dayNum} ${monthName}`, // 19 شباط
+            fullDate: current.toISOString().split('T')[0],
+            imsak: imsak,
+            fajr: fajr,
+            maghrib: maghrib
         });
     }
 
-    // حساب موعد العيد (بعد 30 يوم من البداية)
+    // حساب العيد (اليوم التالي لآخر يوم رمضان)
     let eidDate = new Date(startDate);
-    eidDate.setDate(startDate.getDate() + 30);
-    // تنسيق العيد
-    const eidDayName = arDays[eidDate.getDay()]; // السبت
-    const eidMonth = (eidDate.getMonth() === 1) ? "Shubat" : "Adhar";
-    const eidFullStr = `${eidDayName} ${eidDate.getDate()} ${eidMonth}`; // السبت 21 Adhar
+    eidDate.setDate(startDate.getDate() + ramadanDays);
+    let eidMIndex = eidDate.getMonth();
+    let eidStr = `${daysAr[eidDate.getDay()]} ${eidDate.getDate()} ${monthsAr[eidMIndex]}`;
 
     // ==========================================
-    // 2. بناء الجدول
+    // 2. تعبئة الجدول
     // ==========================================
     const tableBody = document.getElementById('tableBody');
+    const today = new Date();
+    // للتجربة يمكنك تغيير التاريخ التالي لمحاكاة يوم في رمضان:
+    // const today = new Date("2026-02-20"); 
+    const todayStr = today.toISOString().split('T')[0];
     
-    // للحصول على تاريخ اليوم الحالي (لأغراض التلوين)
-    // ملاحظة: بما أننا الآن في 2025/2026 ونحاكي المستقبل، سنستخدم التاريخ الحقيقي للجهاز
-    const todayObj = new Date();
-    const todayStr = todayObj.toISOString().split('T')[0];
-    
-    // تاريخ الغد
-    const tomObj = new Date();
-    tomObj.setDate(todayObj.getDate() + 1);
-    const tomStr = tomObj.toISOString().split('T')[0];
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    const tomStr = tomorrow.toISOString().split('T')[0];
 
-    ramadanData.forEach(row => {
+    tableData.forEach(row => {
         let tr = document.createElement('tr');
         
-        // التلوين حسب الحالة
+        // الحالات اللونية
         if (row.fullDate === todayStr) {
             tr.className = 'active-day';
         } else if (row.fullDate === tomStr) {
@@ -335,8 +320,8 @@
 
         tr.innerHTML = `
             <td class="en-num">${row.ramadan}</td>
-            <td>${row.dayAr}</td>
-            <td class="en-num">${row.dateDisplay}</td>
+            <td>${row.dayName}</td>
+            <td>${row.dateStr}</td>
             <td class="en-num">${row.imsak}</td>
             <td class="en-num">${row.fajr}</td>
             <td class="en-num">${row.maghrib}</td>
@@ -348,108 +333,103 @@
     let eidTr = document.createElement('tr');
     eidTr.className = 'eid-row';
     eidTr.innerHTML = `
-        <td colspan="3" style="font-size:1.2rem;">عيد الفطر المبارك</td>
-        <td colspan="3" class="en-num" style="direction:ltr;">
+        <td colspan="3">عيد الفطر المبارك</td>
+        <td colspan="3" class="en-num" style="direction:ltr; font-size:0.9em;">
             Eid Prayer: 06:10 AM <br>
-            <span style="font-size:0.9rem; font-weight:normal;">${eidFullStr}</span>
+            <span style="color:white; font-weight:normal;">(${eidStr})</span>
         </td>
     `;
     tableBody.appendChild(eidTr);
 
     // ==========================================
-    // 3. الساعة والعداد التنازلي
+    // 3. الساعة والعداد
     // ==========================================
-    function updateTime() {
+    function updateClock() {
         const now = new Date();
-        
         // تحديث الساعة
-        document.getElementById('clock').innerText = now.toLocaleTimeString('en-US', {hour12: false});
+        document.getElementById('clock').innerText = now.toLocaleTimeString('en-US', { hour12: false });
 
-        // منطق العداد
-        let targetTime = null;
-        let label = "";
-        let todayData = ramadanData.find(d => d.fullDate === now.toISOString().split('T')[0]);
+        let target = null;
+        let label = "رمضان كريم";
 
-        if (todayData) {
-            let imsakT = new Date(`${todayData.fullDate}T${todayData.imsak}:00`);
-            let fajrT = new Date(`${todayData.fullDate}T${todayData.fajr}:00`);
-            let maghribT = new Date(`${todayData.fullDate}T${todayData.maghrib}:00`);
+        // البحث في جدول اليوم
+        let todayInfo = tableData.find(d => d.fullDate === now.toISOString().split('T')[0]);
 
-            if (now < imsakT) {
-                targetTime = imsakT; label = "المتبقي للإمساك (To Imsak)";
-            } else if (now < fajrT) {
-                targetTime = fajrT; label = "المتبقي للفجر (To Fajr)";
-            } else if (now < maghribT) {
-                targetTime = maghribT; label = "المتبقي للإفطار (To Maghrib)";
+        if (todayInfo) {
+            let tImsak = new Date(`${todayInfo.fullDate}T${todayInfo.imsak}:00`);
+            let tFajr = new Date(`${todayInfo.fullDate}T${todayInfo.fajr}:00`);
+            let tMaghrib = new Date(`${todayInfo.fullDate}T${todayInfo.maghrib}:00`);
+
+            if (now < tImsak) {
+                target = tImsak; label = "المتبقي للإمساك";
+            } else if (now < tFajr) {
+                target = tFajr; label = "المتبقي للفجر";
+            } else if (now < tMaghrib) {
+                target = tMaghrib; label = "المتبقي للإفطار";
             }
         }
 
-        // إذا لم نجد حدثاً اليوم (أو انتهى اليوم)، نبحث عن إمساك الغد
-        if (!targetTime) {
-            let tomorrow = new Date(now);
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            let tStr = tomorrow.toISOString().split('T')[0];
-            let tData = ramadanData.find(d => d.fullDate === tStr);
-
-            if (tData) {
-                targetTime = new Date(`${tStr}T${tData.imsak}:00`);
+        if (!target) {
+            // البحث عن المستقبل
+            let future = tableData.find(d => d.fullDate > now.toISOString().split('T')[0]);
+            if (future) {
+                target = new Date(`${future.fullDate}T${future.imsak}:00`);
                 label = "المتبقي لإمساك الغد";
             } else {
-                // إذا كنا قبل رمضان
-                let firstDay = new Date(`${ramadanData[0].fullDate}T${ramadanData[0].imsak}:00`);
+                // إذا كنا قبل رمضان (الحالة الحالية)
+                let firstDay = new Date(`${tableData[0].fullDate}T${tableData[0].imsak}:00`);
                 if (now < firstDay) {
-                    targetTime = firstDay;
-                    label = "المتبقي لأول أيام رمضان";
+                   target = firstDay;
+                   label = "المتبقي لأول يوم رمضان";
                 } else {
-                    label = "عيد مبارك";
-                    targetTime = null;
+                   label = "عيد مبارك";
+                   target = null;
                 }
             }
         }
 
-        // عرض العداد
-        const countDiv = document.getElementById('countdown');
-        const labelDiv = document.getElementById('event-label');
-        
-        labelDiv.innerText = label;
+        document.getElementById('event-label').innerText = label;
+        const cdDiv = document.getElementById('countdown');
 
-        if (targetTime) {
-            const diff = targetTime - now;
+        if (target) {
+            const diff = target - now;
             const h = Math.floor(diff / (1000 * 60 * 60));
             const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const s = Math.floor((diff % (1000 * 60)) / 1000);
-            countDiv.innerText = `${h}:${m}:${s}`;
+            cdDiv.innerText = `${h}:${m}:${s}`;
         } else {
-            countDiv.innerText = "--:--:--";
+            cdDiv.innerText = "--:--:--";
         }
     }
 
-    setInterval(updateTime, 1000);
-    updateTime();
+    setInterval(updateClock, 1000);
+    updateClock();
 
     // ==========================================
-    // 4. دالة التحميل PDF (صفحة واحدة)
+    // 4. وظيفة PDF المحسنة (صفحة واحدة مضمونة)
     // ==========================================
     function downloadPDF() {
         const element = document.getElementById('capture-area');
         
-        // إعدادات لضغط المحتوى في صفحة واحدة
+        // 1. تفعيل وضع الطباعة (تصغير العناصر)
+        element.classList.add('pdf-mode');
+
+        // 2. إعدادات PDF دقيقة لملء صفحة A4
         const opt = {
-            margin:       [0.2, 0.2, 0.2, 0.2], // هوامش صغيرة جداً
-            filename:     'Imsakiye_Elazig_2026.pdf',
-            image:        { type: 'jpeg', quality: 1 },
-            html2canvas:  { scale: 2, useCORS: true },
+            margin:       0.2, // هوامش صغيرة جداً (بوصة)
+            filename:     'Imsakiye_Ramadan_2026_Elazig.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true }, // scale 2 لزيادة الدقة
             jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
         };
 
-        // إضافة كلاس مؤقت لتصغير الخطوط أكثر أثناء التصوير
-        element.classList.add('printing-mode');
-        
+        // 3. التوليد ثم إعادة الوضع الطبيعي
         html2pdf().set(opt).from(element).save().then(() => {
-            element.classList.remove('printing-mode');
+            // إزالة وضع الطباعة ليعود الموقع كما كان
+            element.classList.remove('pdf-mode');
         });
     }
-</script>
 
+</script>
 </body>
 </html>
