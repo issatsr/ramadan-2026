@@ -73,7 +73,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            table-layout: fixed; /* تثبيت العرض لمنع التداخل */
+            table-layout: fixed;
         }
         thead { background-color: var(--primary); color: white; }
         th { padding: 12px; font-weight: normal; }
@@ -83,11 +83,14 @@
         tr.next-day { background-color: #fcf3cf; }
         tr.finished { background-color: #f9f9f9; color: #aaa; text-decoration: line-through; text-decoration-color: #c0392b; }
         
+        /* تنسيق صف العيد الجديد */
         .eid-row {
             background: linear-gradient(90deg, #f1c40f, #f39c12);
             color: white;
             font-weight: bold;
         }
+        .eid-left { text-align: left; padding-left: 20px; direction: ltr; }
+        .eid-right { text-align: right; padding-right: 20px; }
 
         /* زر التحميل */
         .btn-area { margin: 30px; }
@@ -106,7 +109,7 @@
         .btn-download:hover { transform: scale(1.05); }
 
         /* ==================================================
-           تنسيق PDF (تم حل مشكلة التداخل)
+           تنسيق PDF
            ================================================== */
         .pdf-mode {
             width: 100% !important;
@@ -151,7 +154,7 @@
         }
 
         .pdf-mode td {
-            padding: 4.5px 4px !important; /* هوامش جانبية لمنع الالتصاق */
+            padding: 4.5px 4px !important;
             border: 1px solid #ddd !important;
             vertical-align: middle !important;
         }
@@ -168,6 +171,7 @@
             font-weight: normal !important;
         }
 
+        /* تنسيق صف العيد في الطباعة */
         .pdf-mode .eid-row {
             background-color: #f0f0f0 !important;
             color: black !important;
@@ -175,6 +179,8 @@
             border-top: 2px solid #999 !important;
             font-size: 11px !important;
         }
+        .pdf-mode .eid-left { color: black !important; }
+        .pdf-mode .eid-right { color: black !important; }
 
     </style>
 </head>
@@ -200,7 +206,10 @@
     <table>
         <thead>
             <tr>
-                <th width="7%">رمضان</th>  <th width="13%">اليوم</th>   <th width="32%">التاريخ</th> <th width="16%">الإمساك</th>
+                <th width="7%">رمضان</th>
+                <th width="13%">اليوم</th>
+                <th width="32%">التاريخ</th>
+                <th width="16%">الإمساك</th>
                 <th width="16%">الفجر</th>
                 <th width="16%">الغروب</th>
             </tr>
@@ -254,8 +263,7 @@
 
     let eidDate = new Date(startDate);
     eidDate.setDate(startDate.getDate() + ramadanLen);
-    let eidStr = `${daysAr[eidDate.getDay()]} ${eidDate.getDate()} ${monthsAr[eidDate.getMonth()]}`;
-
+    
     // ==========================================
     // تعبئة الجدول
     // ==========================================
@@ -274,18 +282,24 @@
         tr.innerHTML = `
             <td class="en-num">${row.r}</td>
             <td style="font-size: 0.95em;">${row.d}</td>
-            <td style="white-space: nowrap; font-size: 0.9em;">${row.dt}</td> <td class="en-num">${row.i}</td>
+            <td style="white-space: nowrap; font-size: 0.9em;">${row.dt}</td>
+            <td class="en-num">${row.i}</td>
             <td class="en-num">${row.f}</td>
             <td class="en-num">${row.m}</td>
         `;
         tBody.appendChild(tr);
     });
 
+    // تصميم صف العيد الجديد (مقسوم نصفين)
     let eidTr = document.createElement('tr');
     eidTr.className = 'eid-row';
     eidTr.innerHTML = `
-        <td colspan="3">عيد الفطر المبارك</td>
-        <td colspan="3" class="en-num" style="direction:ltr">Prayer: 06:10 AM (${eidStr})</td>
+        <td colspan="3" class="eid-right">
+            عيد الفطر المبارك - ${eidDate.getDate()} ${monthsAr[eidDate.getMonth()]}
+        </td>
+        <td colspan="3" class="eid-left">
+            <span class="en-num">Friday - Prayer: 06:10 AM</span>
+        </td>
     `;
     tBody.appendChild(eidTr);
 
