@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إمساكية رمضان 2026 - إيلازيغ</title>
+    <style>
+        :root {
+            --primary-color: #2e7d32; /* أخضر رمضاني */
+            --accent-color: #f9a825; /* ذهبي */
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --finished-color: #b0b0b0;
+            --strike-color: #d32f2f; /* أحمر للشطب */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        /* تنسيق الساعة والعداد */
+        .status-box {
+            background: linear-gradient(135deg, var(--primary-color), #1b5e20);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+        }
+
+        #clock {
+            font-size: 2.5rem;
+            font-weight: bold;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        #countdown {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        /* تنسيق الجدول */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: normal;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr.active-day {
+            background-color: #e8f5e9;
+            border: 2px solid var(--accent-color);
+            font-weight: bold;
+        }
+
+        /* تنسيق اليوم المنتهي */
+        tr.finished {
+            color: var(--finished-color);
+            background-color: #f0f0f0;
+            position: relative;
+        }
+
+        tr.finished td {
+            text-decoration: line-through;
+            text-decoration-color: var(--strike-color); /* خط أحمر */
+            text-decoration-thickness: 2px;
+        }
+
+        /* صف العيد */
+        .eid-row {
+            background-color: var(--accent-color) !important;
+            color: #fff !important;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 600px) {
+            table { font-size: 0.9rem; }
+            th, td { padding: 8px 4px; }
+            #clock { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>إمساكية رمضان 2026</h1>
+    <h2>ولاية إيلازيغ - تركيا (Elazığ)</h2>
+
+    <div class="status-box">
+        <div id="clock">00:00:00</div>
+        <div id="countdown">جاري التحميل...</div>
+    </div>
+
+    <table id="ramadanTable">
+        <thead>
+            <tr>
+                <th>اليوم</th>
+                <th>التاريخ</th>
+                <th>رمضان</th>
+                <th>الإمساك</th>
+                <th>الفجر</th>
+                <th>الغروب</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            </tbody>
+    </table>
+</div>
+
+<script>
+    // ==========================================
+    // إعدادات البيانات (عدل الأوقات هنا بدقة)
+    // ==========================================
+    
+    // ملاحظة: هذه تواريخ متوقعة لعام 2026 (بداية 18 فبراير)
+    // يرجى تحديث الدقائق بناءً على تقويم ديانت الرسمي عند صدوره
+    const ramadanData = [
+        { day: "الأربعاء", date: "2026-02-18", hijri: 1, imsak: "05:38", fajr: "05:48", maghrib: "18:04" },
+        { day: "الخميس",   date: "2026-02-19", hijri: 2, imsak: "05:37", fajr: "05:47", maghrib: "18:05" },
+        { day: "الجمعة",   date: "2026-02-20", hijri: 3, imsak: "05:36", fajr: "05:46", maghrib: "18:06" },
+        { day: "السبت",    date: "2026-02-21", hijri: 4, imsak: "05:34", fajr: "05:44", maghrib: "18:07" },
+        { day: "الأحد",    date: "2026-02-22", hijri: 5, imsak: "05:33", fajr: "05:43", maghrib: "18:08" },
+        // ... يمكنك إكمال باقي الأيام بنفس النمط ...
+        // سأقوم بتوليد بيانات افتراضية لبقية الشهر لأغراض العرض
+    ];
+
+    // دالة لتوليد بقية الشهر تلقائياً (لغرض المثال فقط - احذفها واملأ المصفوفة أعلاه يدوياً للدقة)
+    function generateMockData() {
+        let startDate = new Date("2026-02-18");
+        let imsakMins = 38; 
+        let maghribMins = 4;
+        
+        // مسح المصفوفة لإعادة بنائها بالكامل للمثال
+        ramadanData.length = 0; 
+        
+        const daysAr = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+
+        for (let i = 0; i < 30; i++) {
+            let currentDate = new Date(startDate);
+            currentDate.setDate(startDate.getDate() + i);
+            
+            // محاكاة تغير الوقت (نقصان الإمساك وزيادة الغروب)
+            imsakMins -= 1.2; 
+            maghribMins += 1.1;
+            
+            let imsakH = 5;
+            let imsakM = Math.floor(imsakMins);
+            let maghribH = 18;
+            let maghribM = Math.floor(maghribMins);
+
+            if (maghribM >= 60) { maghribH++; maghribM -= 60; }
+            
+            // تنسيق الوقت
+            let imsakStr = `0${imsakH}:${imsakM < 10 ? '0'+imsakM : imsakM}`;
+            let fajrStr  = `0${imsakH}:${(imsakM+10) < 10 ? '0'+(imsakM+10) : (imsakM+10)}`; // الفجر بعد الإمساك بـ 10 دقائق (افتراضي)
+            let maghribStr = `${maghribH}:${maghribM < 10 ? '0'+maghribM : maghribM}`;
+            
+            let yyyy = currentDate.getFullYear();
+            let mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+            let dd = String(currentDate.getDate()).padStart(2, '0');
+
+            ramadanData.push({
+                day: daysAr[currentDate.getDay()],
+                date: `${yyyy}-${mm}-${dd}`,
+                hijri: i + 1,
+                imsak: imsakStr,
+                fajr: fajrStr,
+                maghrib: maghribStr
+            });
+        }
+    }
+    
+    // تشغيل توليد البيانات (احذف هذا السطر إذا ملأت البيانات يدوياً)
+    generateMockData();
+
+    // إضافة صلاة العيد
+    const eidData = {
+        date: "2026-03-20", // يوم الجمعة
+        time: "06:15" // وقت تقريبي لصلاة العيد
+    };
+
+    // ==========================================
+    // منطق البرنامج
+    // ==========================================
+
+    const tableBody = document.getElementById('tableBody');
+    const clockEl = document.getElementById('clock');
+    const countdownEl = document.getElementById('countdown');
+
+    function renderTable() {
+        tableBody.innerHTML = "";
+        
+        // الحصول على تاريخ اليوم (بدون وقت) للمقارنة
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        ramadanData.forEach(row => {
+            const rowDate = new Date(row.date);
+            rowDate.setHours(0,0,0,0);
+
+            let tr = document.createElement('tr');
+            
+            // التحقق إذا كان اليوم انتهى (أصغر من اليوم الحالي)
+            if (rowDate < today) {
+                tr.className = 'finished';
+            } else if (rowDate.getTime() === today.getTime()) {
+                tr.className = 'active-day';
+            }
+
+            tr.innerHTML = `
+                <td>${row.day}</td>
+                <td style="font-size:0.9em">${row.date}</td>
+                <td>${row.hijri}</td>
+                <td>${row.imsak}</td>
+                <td>${row.fajr}</td>
+                <td>${row.maghrib}</td>
+            `;
+            tableBody.appendChild(tr);
+        });
+
+        // إضافة صف العيد
+        let eidTr = document.createElement('tr');
+        eidTr.className = 'eid-row';
+        eidTr.innerHTML = `
+            <td colspan="3">عيد الفطر المبارك</td>
+            <td colspan="3">صلاة العيد: ${eidData.time} صباحاً (${eidData.date})</td>
+        `;
+        tableBody.appendChild(eidTr);
+    }
+
+    function updateClock() {
+        const now = new Date();
+        clockEl.innerText = now.toLocaleTimeString('ar-SA');
+
+        // منطق العداد التنازلي
+        let nextEvent = null;
+        let eventName = "";
+        let todayStr = now.toISOString().split('T')[0];
+        
+        // البحث في جدول اليوم
+        let todayData = ramadanData.find(d => d.date === todayStr);
+
+        if (todayData) {
+            let imsakTime = new Date(`${todayStr}T${todayData.imsak}:00`);
+            let fajrTime = new Date(`${todayStr}T${todayData.fajr}:00`);
+            let maghribTime = new Date(`${todayStr}T${todayData.maghrib}:00`);
+
+            if (now < imsakTime) {
+                nextEvent = imsakTime;
+                eventName = "الإمساك";
+            } else if (now < fajrTime) {
+                nextEvent = fajrTime;
+                eventName = "أذان الفجر";
+            } else if (now < maghribTime) {
+                nextEvent = maghribTime;
+                eventName = "الإفطار (الغروب)";
+            }
+        }
+
+        // إذا انتهت صلوات اليوم، نبحث عن إمساك الغد
+        if (!nextEvent) {
+            // البحث عن اليوم التالي
+            let tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            let tomorrowStr = tomorrow.toISOString().split('T')[0];
+            let tomorrowData = ramadanData.find(d => d.date === tomorrowStr);
+            
+            if (tomorrowData) {
+                nextEvent = new Date(`${tomorrowStr}T${tomorrowData.imsak}:00`);
+                eventName = "إمساك الغد";
+            } else {
+                // قد يكون العيد
+                let eidDate = new Date(`${eidData.date}T${eidData.time}:00`);
+                if (now < eidDate) {
+                    nextEvent = eidDate;
+                    eventName = "صلاة العيد";
+                }
+            }
+        }
+
+        if (nextEvent) {
+            const diff = nextEvent - now;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            countdownEl.innerHTML = `متبقي على ${eventName}: <br> 
+            <span dir="ltr">${hours}h : ${minutes}m : ${seconds}s</span>`;
+        } else {
+            countdownEl.innerHTML = "كل عام وأنتم بخير";
+        }
+    }
+
+    // التهيئة
+    renderTable();
+    setInterval(updateClock, 1000);
+    updateClock(); // تشغيل فوري
+
+</script>
+
+</body>
+</html>
