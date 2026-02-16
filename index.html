@@ -24,6 +24,7 @@
             text-align: center;
         }
 
+        /* الأرقام بالإنجليزية */
         .en-num {
             font-family: 'Segoe UI', Tahoma, sans-serif;
             font-weight: 700;
@@ -32,7 +33,7 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             background: white;
             border-radius: 15px;
@@ -74,11 +75,21 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            table-layout: fixed;
+            /* أزلنا التخطيط الثابت لمنع تكسر الجدول */
         }
         thead { background-color: var(--primary); color: white; }
-        th { padding: 12px; font-weight: normal; }
-        td { padding: 10px; border-bottom: 1px solid #eee; overflow: hidden; }
+        
+        th { 
+            padding: 12px 8px; 
+            font-weight: normal; 
+            white-space: nowrap; /* منع التفاف العناوين */
+        }
+        
+        td { 
+            padding: 8px; 
+            border-bottom: 1px solid #eee; 
+            white-space: nowrap; /* منع تداخل النصوص */
+        }
         
         tr.active-day { background-color: #d5f5e3; border-left: 5px solid var(--primary); font-weight: bold; }
         tr.next-day { background-color: #fcf3cf; }
@@ -89,6 +100,10 @@
             background: linear-gradient(90deg, #f1c40f, #f39c12);
             color: white;
             font-weight: bold;
+        }
+        .eid-row td {
+            padding: 12px !important;
+            font-size: 1.1rem;
         }
 
         /* زر التحميل */
@@ -108,7 +123,7 @@
         .btn-download:hover { transform: scale(1.05); }
 
         /* ==================================================
-           تنسيق PDF
+           تنسيق PDF (مضبوط لصفحة واحدة)
            ================================================== */
         .pdf-mode {
             width: 100% !important;
@@ -153,7 +168,7 @@
         }
 
         .pdf-mode td {
-            padding: 4.5px 4px !important;
+            padding: 4px !important;
             border: 1px solid #ddd !important;
             vertical-align: middle !important;
         }
@@ -179,6 +194,7 @@
         }
         .pdf-mode .eid-row td {
             color: black !important;
+            font-size: 11px !important;
         }
 
     </style>
@@ -205,12 +221,12 @@
     <table>
         <thead>
             <tr>
-                <th width="7%">رمضان</th>
-                <th width="13%">اليوم</th>
-                <th width="32%">التاريخ</th>
-                <th width="16%">الإمساك</th>
-                <th width="16%">الفجر</th>
-                <th width="16%">الغروب</th>
+                <th>رمضان</th>
+                <th>اليوم</th>
+                <th>التاريخ</th>
+                <th>الإمساك</th>
+                <th>الفجر</th>
+                <th>الغروب</th>
             </tr>
         </thead>
         <tbody id="tableBody">
@@ -280,8 +296,8 @@
 
         tr.innerHTML = `
             <td class="en-num">${row.r}</td>
-            <td style="font-size: 0.95em;">${row.d}</td>
-            <td style="white-space: nowrap; font-size: 0.9em;">${row.dt}</td>
+            <td>${row.d}</td>
+            <td>${row.dt}</td>
             <td class="en-num">${row.i}</td>
             <td class="en-num">${row.f}</td>
             <td class="en-num">${row.m}</td>
@@ -289,17 +305,18 @@
         tBody.appendChild(tr);
     });
 
-    // --- صف العيد (كله عربي ما عدا الرقم) ---
+    // --- صف العيد (التصميم المطلوب) ---
     let eidTr = document.createElement('tr');
     eidTr.className = 'eid-row';
     
-    // تقسيم الصف إلى خليتين كبيرتين (3 أعمدة يمين + 3 أعمدة يسار)
+    // تقسيم الصف: 3 أعمدة لليمين و 3 لليسار
+    // colspan="3" يعني الخانة تأخذ مساحة 3 أعمدة
     eidTr.innerHTML = `
-        <td colspan="3" style="text-align: right; padding-right: 15px;">
+        <td colspan="3" style="text-align: center; border-left: 1px solid rgba(255,255,255,0.3);">
             عيد الفطر المبارك - ${eidDate.getDate()} ${monthsAr[eidDate.getMonth()]}
         </td>
-        <td colspan="3" style="text-align: left; padding-left: 15px;">
-            الجمعة | صلاة العيد: <span class="en-num">06:10</span>
+        <td colspan="3" style="text-align: center;">
+            الجمعة | صلاة العيد : <span class="en-num">06:10</span> صباحاً
         </td>
     `;
     tBody.appendChild(eidTr);
