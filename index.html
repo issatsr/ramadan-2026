@@ -28,6 +28,7 @@
             font-family: 'Segoe UI', Tahoma, sans-serif;
             font-weight: 700;
             direction: ltr;
+            display: inline-block;
         }
 
         .container {
@@ -202,7 +203,8 @@
             <tr>
                 <th width="8%">رمضان</th>
                 <th width="14%">اليوم</th>
-                <th width="26%">التاريخ</th> <th width="16%">الإمساك</th>
+                <th width="26%">التاريخ</th> 
+                <th width="16%">الإمساك</th>
                 <th width="16%">الفجر</th>
                 <th width="20%">الغروب</th>
             </tr>
@@ -220,31 +222,43 @@
 
 <script>
     // ==========================================
-    // البيانات الدقيقة المدخلة
+    // البيانات
     // ==========================================
-    const startDate = new Date(2026, 1, 19); 
+    const startDate = new Date(2026, 1, 19); // 19 شباط
     const ramadanLen = 29;
+    
     const monthsAr = { 1: "شباط", 2: "آذار" };
     const daysAr = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
-
-    // قوائم الأوقات كما زودتنا بها
-    const imsakList = ["05:31","05:30","05:28","05:27","05:26","05:25","05:23","05:22","05:21","05:19","05:18","05:16","05:15","05:13","05:12","05:11","05:09","05:08","05:06","05:04","05:03","05:01","05:00","04:58","04:57","04:55","04:53","04:52","04:50"];
-    const fajrList = ["05:41","05:40","05:38","05:37","05:36","05:35","05:33","05:32","05:31","05:29","05:28","05:26","05:25","05:23","05:22","05:21","05:19","05:18","05:16","05:14","05:13","05:11","05:10","05:08","05:07","05:05","05:03","05:02","05:00"];
-    const maghribList = ["18:11","18:13","18:14","18:15","18:16","18:17","18:18","18:19","18:20","18:21","18:22","18:23","18:24","18:25","18:26","18:27","18:28","18:29","18:30","18:31","18:32","18:33","18:34","18:35","18:36","18:37","18:38","18:39","18:40"];
     
+    // البيانات الدقيقة من الرسالة
+    const imsakRaw = ["05.31","05.30","05.28","05.27","05.26","05.25","05.23","05.22","05.21","05.19","05.18","05.16","05.15","05.13","05.12","05.11","05.09","05.08","05.06","05.04","05.03","05.01","05.00","04.58","04.57","04.55","04.53","04.52","04.50"];
+    const fajrRaw = ["05.41","05.40","05.38","05.37","05.36","05.35","05.33","05.32","05.31","05.29","05.28","05.26","05.25","05.23","05.22","05.21","05.19","05.18","05.16","05.14","05.13","05.11","05.10","05.08","05.07","05.05","05.03","05.02","05.00"];
+    // تم تحويل الغروب إلى 24 ساعة ليعمل العداد
+    const maghribRaw = ["18.11","18.13","18.14","18.15","18.16","18.17","18.18","18.19","18.20","18.21","18.22","18.23","18.24","18.25","18.26","18.27","18.28","18.29","18.30","18.31","18.32","18.33","18.34","18.35","18.36","18.37","18.38","18.39","18.40"];
+
     const tableData = [];
+
     for (let i = 0; i < ramadanLen; i++) {
         let curr = new Date(startDate);
         curr.setDate(startDate.getDate() + i);
+
+        // تنظيف البيانات (استبدال النقطة بنقطتين)
+        let imsak = (imsakRaw[i] || "").replace('.', ':');
+        let fajr = (fajrRaw[i] || "").replace('.', ':');
+        let maghrib = (maghribRaw[i] || "").replace('.', ':');
+
         tableData.push({
             r: i + 1,
             d: daysAr[curr.getDay()],
             dt: `${curr.getDate()} ${monthsAr[curr.getMonth()]}`,
             full: curr.toISOString().split('T')[0],
-            i: imsakList[i], f: fajrList[i], m: maghribList[i]
+            i: imsak, f: fajr, m: maghrib
         });
     }
 
+    // ==========================================
+    // تعبئة الجدول
+    // ==========================================
     const tBody = document.getElementById('tableBody');
     const now = new Date();
     const todayStr = now.toISOString().split('T')[0];
@@ -258,43 +272,20 @@
         else if(row.full < todayStr) tr.className = 'finished';
 
         tr.innerHTML = `
-            <td class="en-num">9ع${row.r}</td>
-            <td>${row.d}</td>
-            <td style="white-space: nowrap;">${row.dt}</td> 
-            <td class="en-num">${row.i}</td>
-            <td class="en-num">${row.f}</td>
-            <td class="en-num">${row.m}</td>
-        `;
-        tBody.appendChild(tr);
-    });
-
-
-    tableData.forEach(row => {
-        let tr = document.createElement('tr');
-        if(row.full === todayStr) tr.className = 'active-day';
-        else if(row.full === tomStr) tr.className = 'next-day';
-        else if(row.full < todayStr) tr.className = 'finished';
-
-        tr.innerHTML = `
             <td class="en-num">${row.r}</td>
             <td>${row.d}</td>
-            <td style="white-space: nowrap;">${row.dt}</td> 
-            <td class="en-num">${row.i}</td>
+            <td style="white-space: nowrap;">${row.dt}</td> <td class="en-num">${row.i}</td>
             <td class="en-num">${row.f}</td>
             <td class="en-num">${row.m}</td>
         `;
         tBody.appendChild(tr);
     });
-    let eidDate = new Date(startDate); eidDate.setDate(startDate.getDate() + ramadanLen);
+
     let eidTr = document.createElement('tr');
     eidTr.className = 'eid-row';
     eidTr.innerHTML = `
-        <td colspan="3" style="text-align: center; border-left: 1px solid rgba(255,255,255,0.4);">
-            عيد الفطر المبارك - ${eidDate.getDate()} ${monthsAr[eidDate.getMonth()]}
-        </td>
-        <td colspan="3" style="text-align: center;">
-            الجمعة | صلاة العيد : <span class="en-num">06:45</span> صباحاً
-        </td>
+        <td colspan="3">عيد الفطر المبارك - 20 آذار</td>
+        <td colspan="3">الجمعة | صلاة العيد : <span class="en-num">06:45</span> صباحاً</td>
     `;
     tBody.appendChild(eidTr);
 
